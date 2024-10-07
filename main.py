@@ -1,19 +1,3 @@
-import time
-import network
-
-
-
-def connect_wifi(ssid, password):
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    if not wlan.isconnected():
-        print('Connecting to WiFi...')
-        wlan.connect(ssid, password)
-        while not wlan.isconnected():
-            print('WiFi is not connected...', wlan.ifconfig())
-            time.sleep(1)
-    print('WiFi connected:', wlan.ifconfig())
-
 from micropython import const  # NOQA
 from i2c import I2C
 import gt911
@@ -55,7 +39,6 @@ _DISP = None
 _BCKL = None
 _DRST = None
 
-
 I2C_BUS = I2C.Bus(
     host=1,
     scl=_CTP_SCL,
@@ -87,13 +70,11 @@ _DATA2 = const(42)  # R5
 _DATA1 = const(2)  # R4
 _DATA0 = const(1)  # R3
 
-
 bus = lcd_bus.RGBBus(
     hsync=_HSYNC,
     vsync=_VSYNC,
     de=_DE,
     pclk=_PCLK,
-    disp=1,
     data0=_DATA0,
     data1=_DATA1,
     data2=_DATA2,
@@ -102,32 +83,14 @@ bus = lcd_bus.RGBBus(
     data5=_DATA5,
     data6=_DATA6,
     data7=_DATA7,
-    # data8=_DATA8,
-    # data9=_DATA9,
-    # data10=_DATA10,
-    # data11=_DATA11,
-    # data12=_DATA12,
-    # data13=_DATA13,
-    # data14=_DATA14,
-    # data15=_DATA15,
-    # data_pins=(
-    #     _DATA0,
-    #     _DATA1,
-    #     _DATA2,
-    #     _DATA3,
-    #     _DATA4,
-    #     _DATA5,
-    #     _DATA6,
-    #     _DATA7,
-    #     _DATA8,
-    #     _DATA9,
-    #     _DATA10,
-    #     _DATA11,
-    #     _DATA12,
-    #     _DATA13,
-    #     _DATA14,
-    #     _DATA15
-    # ),
+    data8=_DATA8,
+    data9=_DATA9,
+    data10=_DATA10,
+    data11=_DATA11,
+    data12=_DATA12,
+    data13=_DATA13,
+    data14=_DATA14,
+    data15=_DATA15,
     freq=_LCD_FREQ,
     hsync_front_porch=_HSYNC_FRONT_PORCH,
     hsync_back_porch=_HSYNC_BACK_PORCH,
@@ -142,15 +105,15 @@ bus = lcd_bus.RGBBus(
     pclk_active_low=_PCLK_ACTIVE_NEG,
 )
 
-
-buf = bus.allocate_framebuffer(_BUFFER_SIZE, lcd_bus.MEMORY_SPIRAM)
+buf1 = bus.allocate_framebuffer(_BUFFER_SIZE, lcd_bus.MEMORY_SPIRAM)
+buf2 = bus.allocate_framebuffer(_BUFFER_SIZE, lcd_bus.MEMORY_SPIRAM)
 
 display = rgb_display.RGBDisplay(
     data_bus=bus,
     display_width=_WIDTH,
     display_height=_HEIGHT,
-    frame_buffer1=buf,
-    frame_buffer2=None,
+    frame_buffer1=buf1,
+    frame_buffer2=buf2,
     color_space=lv.COLOR_FORMAT.RGB565,
     rgb565_byte_swap=True
 )
@@ -160,16 +123,24 @@ display.init()
 display.set_backlight(100)
 indev = gt911.GT911(TOUCH_DEVICE)
 
+if indev.hw_size != (_WIDTH, _HEIGHT):
+    fw_config = indev.firmware_config
+    fw_config.width = _WIDTH
+    fw_config.height = _HEIGHT
+    fw_config.save()
+
+    del fw_config
+
 # display.set_rotation(lv.DISPLAY_ROTATION._90)  # NOQA
 
-lv.init()
-scrn = lv.obj()
-
-btn = lv.button(scrn)
-btn.center()
-
+scrn = lv.screen_active()
 scrn.set_style_bg_color(lv.color_hex(0x000000), 0)
-lv.screen_load(scrn)
-lv.screen_active()
+
+slider = lv.slider(scrn)
+slider.center()
+button = lv.button(scrn)
+button.center()
+buttonLabel = lv.label(button)
+buttonLabel.set_text('Hello, World!')
 
 task_handler.TaskHandler()
