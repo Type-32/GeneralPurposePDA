@@ -156,6 +156,7 @@ import asyncio
 if __name__ == "__main__":
     th = task_handler.TaskHandler()
 
+    pdaos.load()
     asyncio.run(pdaos.main())
 
 
