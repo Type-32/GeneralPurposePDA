@@ -115,7 +115,7 @@ display = rgb_display.RGBDisplay(
     frame_buffer1=buf1,
     frame_buffer2=buf2,
     color_space=lv.COLOR_FORMAT.RGB565,
-    rgb565_byte_swap=True
+    rgb565_byte_swap=False
 )
 
 display.set_power(True)
@@ -131,16 +131,22 @@ if indev.hw_size != (_WIDTH, _HEIGHT):
 
     del fw_config
 
+# file_system_driver = lv.fs_drv_t()
+# fs_driver.fs_register(file_system_driver, 'S')
+
 # display.set_rotation(lv.DISPLAY_ROTATION._90)  # NOQA
 
-scrn = lv.screen_active()
-scrn.set_style_bg_color(lv.color_hex(0x000000), 0)
+# scrn = lv.screen_active()
+# scrn.set_style_bg_color(lv.color_hex(0xffffff), 0)
+#
+# slider = lv.slider(scrn)
+# slider.center()
+# button = lv.button(scrn)
+# button.center()
+# buttonLabel = lv.label(button)
+# buttonLabel.set_text('Hello, World!')
 
-slider = lv.slider(scrn)
-slider.center()
-button = lv.button(scrn)
-button.center()
-buttonLabel = lv.label(button)
-buttonLabel.set_text('Hello, World!')
+import osui
+osui.main()
 
 task_handler.TaskHandler()
