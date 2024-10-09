@@ -518,10 +518,10 @@ def refresh_lvgl_app_objects(apps: list[Application]):
     gc.collect()
 
     for app in apps:
-        ui_App = ui_App_create(ui_AppInterface, app.app_color)
+        ui_App = ui_App_create(ui_AppInterface, app.get_color())
         ui_App.set_x(0)
         ui_App.set_y(0)
-        lvgl_app_objects.append(LVGLToObjectBindings(ui_App, app.app_name))
+        lvgl_app_objects.append(LVGLToObjectBindings(ui_App, app.get_name()))
 
 
 async def update(): # The main function updates the screen.
