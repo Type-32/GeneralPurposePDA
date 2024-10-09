@@ -1,12 +1,26 @@
+import gc
 import lvgl as lv
+import utime
+import connectivity as con
+import asyncio
 
+from pdaos import Application
 
 # import ui
 # import ui_images
 
+class LVGLToObjectBindings:
+    def __init__(self, obj: any, identifier: str):
+        self.obj = obj
+        self.identifier = identifier
+
+    def get(self) -> any:
+        return self.obj
+
+
 dispp = lv.display_get_default()
-theme = lv.theme_default_init(dispp, lv.palette_main(lv.PALETTE.BLUE), lv.palette_main(lv.PALETTE.RED), False, lv.font_default())
-# dispp.set_theme(theme)
+theme = lv.theme_default_init(dispp, lv.palette_main(lv.PALETTE.BLUE), lv.palette_main(lv.PALETTE.BLUE), False, lv.font_default())
+dispp.set_theme(theme)
 
 _ui_comp_table = {}
 _ui_comp_prev = None
@@ -21,8 +35,6 @@ def SetFlag(obj, flag, value: bool):
         obj.remove_flag(flag)
     return
 
-def custom():
-    pass
 
 
 # COMPONENTS
@@ -44,7 +56,7 @@ def ui_OptionsModal_create(comp_parent):
     cui_ModalTitle.set_style_text_opa(255, lv.PART.MAIN | lv.STATE.DEFAULT)
     cui_ModalTitle.set_style_text_letter_space(1, lv.PART.MAIN | lv.STATE.DEFAULT)
     cui_ModalTitle.set_style_text_line_space(0, lv.PART.MAIN | lv.STATE.DEFAULT)
-    cui_ModalTitle.set_style_text_font(lv.font_montserrat_18, lv.PART.MAIN | lv.STATE.DEFAULT)
+    # cui_ModalTitle.set_style_text_font(lv.font_montserrat_18, lv.PART.MAIN | lv.STATE.DEFAULT)
     cui_ModalContent = lv.label(cui_OptionsModal)
     cui_ModalContent.set_text("text")
     cui_ModalContent.set_width(lv.pct(100))
@@ -97,7 +109,6 @@ def ui_OptionsModal_create(comp_parent):
     return cui_OptionsModal
 
 # COMPONENT App
-
 def comp_App_AppButton_eventhandler(event_struct):
     target = event_struct.get_target()
     comp_App = ui_comp_get_root_from_child(target, "App")
@@ -106,7 +117,7 @@ def comp_App_AppButton_eventhandler(event_struct):
         (event_struct)
     return
 
-def ui_App_create(comp_parent):
+def ui_App_create(comp_parent, bg_color_hex: int = 0x5385ED):
     cui_App = lv.obj(comp_parent)
     cui_App.remove_style_all()
     cui_App.set_width(80)
@@ -122,6 +133,8 @@ def ui_App_create(comp_parent):
     cui_AppButton.set_align(lv.ALIGN.TOP_MID)
     SetFlag(cui_AppButton, lv.obj.FLAG.SCROLLABLE, False)
     SetFlag(cui_AppButton, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+    cui_AppButton.set_style_bg_color(lv.color_hex(bg_color_hex), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_AppButton.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
     cui_AppIcon = lv.label(cui_AppButton)
     cui_AppIcon.set_text("BYD")
     cui_AppIcon.set_width(lv.SIZE_CONTENT)  # 1
@@ -137,8 +150,48 @@ def ui_App_create(comp_parent):
                                    "AppTitle": cui_AppTitle, "_CompName": "App"}
     return cui_App
 
-ui____initial_actions0 = lv.obj()
+def comp_Notification_Notification_eventhandler(event_struct):
+   target = event_struct.get_target()
+   comp_Notification = ui_comp_get_root_from_child(target, "Notification")
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
 
+def ui_Notification_create(comp_parent):
+    cui_Notification = lv.button(comp_parent)
+    cui_Notification.set_height(70)
+    cui_Notification.set_width(lv.pct(100))
+    cui_Notification.set_align( lv.ALIGN.CENTER)
+    cui_Notification.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+    cui_Notification.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+    SetFlag(cui_Notification, lv.obj.FLAG.SCROLLABLE, False)
+    SetFlag(cui_Notification, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+    cui_Notification.set_style_bg_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_Notification.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_color(lv.color_hex(0x000000), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_opa(50, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_width( 1, lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_pad( 0, lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_NotificationTitle = lv.label(cui_Notification)
+    cui_NotificationTitle.set_text("Title")
+    cui_NotificationTitle.set_width(lv.pct(100))
+    cui_NotificationTitle.set_height(lv.SIZE_CONTENT)   # 100
+    cui_NotificationTitle.set_align( lv.ALIGN.CENTER)
+    cui_NotificationTitle.set_style_text_color(lv.color_hex(0x007EE3), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_NotificationTitle.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_NotificationText = lv.label(cui_Notification)
+    cui_NotificationText.set_text("text\nsasdsa")
+    cui_NotificationText.set_width(lv.pct(100))
+    cui_NotificationText.set_height(lv.SIZE_CONTENT)   # 100
+    cui_NotificationText.set_align( lv.ALIGN.CENTER)
+    cui_NotificationText.set_style_text_color(lv.color_hex(0x000000), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_NotificationText.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_Notification.add_event_cb(comp_Notification_Notification_eventhandler, lv.EVENT.ALL, None)
+    _ui_comp_table[id(cui_Notification)]= {"Notification" : cui_Notification,"NotificationTitle" : cui_NotificationTitle,"NotificationText" : cui_NotificationText, "_CompName" : "Notification"}
+    return cui_Notification
+
+# ui____initial_actions0 = lv.obj()
 def OptionsModal_Options_Opt1_eventhandler(event_struct):
     target = event_struct.get_target()
     event = event_struct.code
@@ -152,6 +205,13 @@ def OptionsModal_Options_Opt2_eventhandler(event_struct):
     if event == lv.EVENT.CLICKED and True:
         (event_struct)
     return
+
+def HomeButton_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
 
 def _ui_comp_del_event(e):
     target = e.get_target()
@@ -168,177 +228,304 @@ def ui_comp_get_root_from_child(child, compname):
                     return _ui_comp_table[component]
     return None
 
-def main():
-    ui_Screen1 = lv.screen_active()
-    ui_Screen1.set_style_bg_color(lv.color_hex(0xffffff), 0)
-    SetFlag(ui_Screen1, lv.obj.FLAG.SCROLLABLE, False)
+keyboard: str = ""
 
-    ui_MainContainer = lv.obj(ui_Screen1)
-    ui_MainContainer.remove_style_all()
-    ui_MainContainer.set_width(lv.pct(100))
-    ui_MainContainer.set_height(lv.pct(100))
-    ui_MainContainer.set_align(lv.ALIGN.CENTER)
-    SetFlag(ui_MainContainer, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_MainContainer, lv.obj.FLAG.SCROLLABLE, False)
+def set_keyboard_content(content: str):
+    global keyboard
+    keyboard = content
 
-    ui_Interface = lv.obj(ui_MainContainer)
-    ui_Interface.remove_style_all()
-    ui_Interface.set_width(lv.pct(100))
-    ui_Interface.set_height(lv.pct(100))
-    ui_Interface.set_align(lv.ALIGN.CENTER)
-    ui_Interface.set_flex_flow(lv.FLEX_FLOW.COLUMN)
-    ui_Interface.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-    SetFlag(ui_Interface, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_Interface, lv.obj.FLAG.SCROLLABLE, False)
+def get_keyboard_content() -> str:
+    global keyboard
+    return keyboard
 
-    ui_InfoHeader = lv.obj(ui_Interface)
-    ui_InfoHeader.remove_style_all()
-    ui_InfoHeader.set_height(20)
-    ui_InfoHeader.set_width(lv.pct(100))
-    ui_InfoHeader.set_align(lv.ALIGN.TOP_MID)
-    ui_InfoHeader.set_flex_flow(lv.FLEX_FLOW.ROW)
-    ui_InfoHeader.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-    SetFlag(ui_InfoHeader, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_InfoHeader, lv.obj.FLAG.SCROLLABLE, False)
-    ui_InfoHeader.set_style_bg_color(lv.color_hex(0xCCCCCC), lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_InfoHeader.set_style_bg_opa(255, lv.PART.MAIN | lv.STATE.DEFAULT)
 
-    ui_InfoHeader.set_style_pad_left(4, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
-    ui_InfoHeader.set_style_pad_right(4, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
-    ui_InfoHeader.set_style_pad_top(2, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
-    ui_InfoHeader.set_style_pad_bottom(2, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
+def get_local_current_time():
+    current_time = utime.localtime()
+    return "{:02d}:{:02d}:{:02d}".format(current_time[3], current_time[4], current_time[5])
 
-    ui_LeftSection = lv.obj(ui_InfoHeader)
-    ui_LeftSection.remove_style_all()
-    ui_LeftSection.set_height(lv.pct(100))
-    ui_LeftSection.set_flex_grow(1)
-    ui_LeftSection.set_align(lv.ALIGN.CENTER)
-    ui_LeftSection.set_flex_flow(lv.FLEX_FLOW.ROW)
-    ui_LeftSection.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER)
-    SetFlag(ui_LeftSection, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_LeftSection, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_WifiStatus = lv.label(ui_LeftSection)
-    ui_WifiStatus.set_text("Wifi: Not Connected")
-    ui_WifiStatus.set_width(lv.SIZE_CONTENT)  # 1
-    ui_WifiStatus.set_height(lv.SIZE_CONTENT)  # 1
-    ui_WifiStatus.set_align(lv.ALIGN.CENTER)
+ui_Screen1 = lv.screen_active()
+ui_Screen1.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
+SetFlag(ui_Screen1, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_MiddleSection = lv.obj(ui_InfoHeader)
-    ui_MiddleSection.remove_style_all()
-    ui_MiddleSection.set_height(lv.pct(100))
-    ui_MiddleSection.set_flex_grow(1)
-    ui_MiddleSection.set_align(lv.ALIGN.CENTER)
-    ui_MiddleSection.set_flex_flow(lv.FLEX_FLOW.ROW)
-    ui_MiddleSection.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-    SetFlag(ui_MiddleSection, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_MiddleSection, lv.obj.FLAG.SCROLLABLE, False)
+ui_MainContainer = lv.obj(ui_Screen1)
+ui_MainContainer.remove_style_all()
+ui_MainContainer.set_width(lv.pct(100))
+ui_MainContainer.set_height(lv.pct(100))
+ui_MainContainer.set_align(lv.ALIGN.CENTER)
+SetFlag(ui_MainContainer, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_MainContainer, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_Time = lv.label(ui_MiddleSection)
-    ui_Time.set_text("10:00")
-    ui_Time.set_width(lv.SIZE_CONTENT)  # 1
-    ui_Time.set_height(lv.SIZE_CONTENT)  # 1
-    ui_Time.set_align(lv.ALIGN.CENTER)
+ui_Interface = lv.obj(ui_MainContainer)
+ui_Interface.remove_style_all()
+ui_Interface.set_width(lv.pct(100))
+ui_Interface.set_height(lv.pct(100))
+ui_Interface.set_align(lv.ALIGN.CENTER)
+ui_Interface.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+ui_Interface.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_Interface, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_Interface, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_RightSection = lv.obj(ui_InfoHeader)
-    ui_RightSection.remove_style_all()
-    ui_RightSection.set_height(lv.pct(100))
-    ui_RightSection.set_flex_grow(1)
-    ui_RightSection.set_align(lv.ALIGN.CENTER)
-    ui_RightSection.set_flex_flow(lv.FLEX_FLOW.ROW)
-    ui_RightSection.set_flex_align(lv.FLEX_ALIGN.END, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-    SetFlag(ui_RightSection, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_RightSection, lv.obj.FLAG.SCROLLABLE, False)
+ui_InfoHeader = lv.obj(ui_Interface)
+ui_InfoHeader.remove_style_all()
+ui_InfoHeader.set_height(20)
+ui_InfoHeader.set_width(lv.pct(100))
+ui_InfoHeader.set_align(lv.ALIGN.TOP_MID)
+ui_InfoHeader.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_InfoHeader.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_InfoHeader, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_InfoHeader, lv.obj.FLAG.SCROLLABLE, False)
+ui_InfoHeader.set_style_bg_color(lv.color_hex(0x2196F3), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_InfoHeader.set_style_bg_opa(255, lv.PART.MAIN | lv.STATE.DEFAULT)
 
-    ui_Battery = lv.label(ui_RightSection)
-    ui_Battery.set_text("90% Charge")
-    ui_Battery.set_width(lv.SIZE_CONTENT)  # 1
-    ui_Battery.set_height(lv.SIZE_CONTENT)  # 1
-    ui_Battery.set_align(lv.ALIGN.CENTER)
+ui_InfoHeader.set_style_pad_left(4, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
+ui_InfoHeader.set_style_pad_right(4, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
+ui_InfoHeader.set_style_pad_top(2, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
+ui_InfoHeader.set_style_pad_bottom(2, lv.PART.SCROLLBAR | lv.STATE.DEFAULT)
 
-    ui_AppInterface = lv.obj(ui_Interface)
-    ui_AppInterface.remove_style_all()
-    ui_AppInterface.set_width(lv.pct(100))
-    ui_AppInterface.set_height(lv.pct(95))
-    ui_AppInterface.set_align(lv.ALIGN.CENTER)
-    ui_AppInterface.set_flex_flow(lv.FLEX_FLOW.ROW)
-    ui_AppInterface.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
-    SetFlag(ui_AppInterface, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_AppInterface, lv.obj.FLAG.SCROLLABLE, True)
-    ui_AppInterface.set_style_pad_left(30, lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_AppInterface.set_style_pad_right(30, lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_AppInterface.set_style_pad_top(30, lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_AppInterface.set_style_pad_bottom(30, lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_AppInterface.set_style_pad_row(10, lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_AppInterface.set_style_pad_column(10, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_LeftSection = lv.obj(ui_InfoHeader)
+ui_LeftSection.remove_style_all()
+ui_LeftSection.set_height(lv.pct(100))
+ui_LeftSection.set_flex_grow(1)
+ui_LeftSection.set_align(lv.ALIGN.CENTER)
+ui_LeftSection.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_LeftSection.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_LeftSection, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_LeftSection, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_App = ui_App_create(ui_AppInterface)
-    # ui_App.set_x(-200)
-    # ui_App.set_y(-30)
+ui_WifiStatus = lv.label(ui_LeftSection)
+ui_WifiStatus.set_text(f"Wifi: Loading...")
+ui_WifiStatus.set_width(lv.SIZE_CONTENT)  # 1
+ui_WifiStatus.set_height(lv.SIZE_CONTENT)  # 1
+ui_WifiStatus.set_align(lv.ALIGN.CENTER)
+ui_WifiStatus.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_WifiStatus.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
 
-    ui_OverInterface = lv.obj(ui_MainContainer)
-    ui_OverInterface.remove_style_all()
-    ui_OverInterface.set_width(lv.pct(100))
-    ui_OverInterface.set_height(lv.pct(100))
-    ui_OverInterface.set_align(lv.ALIGN.CENTER)
-    SetFlag(ui_OverInterface, lv.obj.FLAG.HIDDEN, True)
-    SetFlag(ui_OverInterface, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_OverInterface, lv.obj.FLAG.SCROLLABLE, False)
+ui_MiddleSection = lv.obj(ui_InfoHeader)
+ui_MiddleSection.remove_style_all()
+ui_MiddleSection.set_height(lv.pct(100))
+ui_MiddleSection.set_flex_grow(1)
+ui_MiddleSection.set_align(lv.ALIGN.CENTER)
+ui_MiddleSection.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_MiddleSection.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_MiddleSection, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_MiddleSection, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_ModalContainer = lv.obj(ui_OverInterface)
-    ui_ModalContainer.remove_style_all()
-    ui_ModalContainer.set_width(lv.pct(100))
-    ui_ModalContainer.set_height(lv.pct(100))
-    ui_ModalContainer.set_align(lv.ALIGN.CENTER)
-    SetFlag(ui_ModalContainer, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_ModalContainer, lv.obj.FLAG.SCROLLABLE, False)
-    ui_ModalContainer.set_style_bg_color(lv.color_hex(0x101010), lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_ModalContainer.set_style_bg_opa(100, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_Time = lv.label(ui_MiddleSection)
+ui_Time.set_text("??:??:??")
+ui_Time.set_width(lv.SIZE_CONTENT)  # 1
+ui_Time.set_height(lv.SIZE_CONTENT)  # 1
+ui_Time.set_align(lv.ALIGN.CENTER)
 
-    ui_OptionsModal = ui_OptionsModal_create(ui_ModalContainer)
-    ui_OptionsModal.set_x(0)
-    ui_OptionsModal.set_y(0)
+ui_RightSection = lv.obj(ui_InfoHeader)
+ui_RightSection.remove_style_all()
+ui_RightSection.set_height(lv.pct(100))
+ui_RightSection.set_flex_grow(1)
+ui_RightSection.set_align(lv.ALIGN.CENTER)
+ui_RightSection.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_RightSection.set_flex_align(lv.FLEX_ALIGN.END, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_RightSection, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_RightSection, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_comp_get_child(ui_OptionsModal, "Options_Opt1").add_event_cb(OptionsModal_Options_Opt1_eventhandler,
-                                                                    lv.EVENT.ALL, None)
+ui_Battery = lv.label(ui_RightSection)
+ui_Battery.set_text("??% Charge")
+ui_Battery.set_width(lv.SIZE_CONTENT)  # 1
+ui_Battery.set_height(lv.SIZE_CONTENT)  # 1
+ui_Battery.set_align(lv.ALIGN.CENTER)
+ui_Battery.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_Battery.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
 
-    ui_comp_get_child(ui_OptionsModal, "Options_Opt2").add_event_cb(OptionsModal_Options_Opt2_eventhandler,
-                                                                    lv.EVENT.ALL, None)
-    ui_KeyboardContainer = lv.obj(ui_OverInterface)
-    ui_KeyboardContainer.remove_style_all()
-    ui_KeyboardContainer.set_width(lv.pct(100))
-    ui_KeyboardContainer.set_height(lv.pct(100))
-    ui_KeyboardContainer.set_align(lv.ALIGN.CENTER)
-    ui_KeyboardContainer.set_flex_flow(lv.FLEX_FLOW.COLUMN)
-    ui_KeyboardContainer.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
-    SetFlag(ui_KeyboardContainer, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_KeyboardContainer, lv.obj.FLAG.SCROLLABLE, False)
-    ui_KeyboardContainer.set_style_bg_color(lv.color_hex(0x000000), lv.PART.MAIN | lv.STATE.DEFAULT)
-    ui_KeyboardContainer.set_style_bg_opa(100, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface = lv.obj(ui_Interface)
+ui_AppInterface.remove_style_all()
+ui_AppInterface.set_width(lv.pct(100))
+ui_AppInterface.set_height(lv.pct(95))
+ui_AppInterface.set_align(lv.ALIGN.CENTER)
+ui_AppInterface.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_AppInterface.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
+SetFlag(ui_AppInterface, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_AppInterface, lv.obj.FLAG.SCROLLABLE, True)
+ui_AppInterface.set_style_pad_left(30, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface.set_style_pad_right(30, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface.set_style_pad_top(30, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface.set_style_pad_bottom(30, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface.set_style_pad_row(10, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface.set_style_pad_column(10, lv.PART.MAIN | lv.STATE.DEFAULT)
 
-    ui_PeerView = lv.obj(ui_KeyboardContainer)
-    ui_PeerView.remove_style_all()
-    ui_PeerView.set_width(lv.pct(100))
-    ui_PeerView.set_height(lv.pct(10))
-    ui_PeerView.set_align(lv.ALIGN.CENTER)
-    SetFlag(ui_PeerView, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(ui_PeerView, lv.obj.FLAG.SCROLLABLE, False)
+# ui_App = ui_App_create(ui_AppInterface)
+# ui_App.set_x(-200)
+# ui_App.set_y(-30)
 
-    ui_KeyboardContent = lv.textarea(ui_KeyboardContainer)
-    ui_KeyboardContent.set_width(lv.pct(100))
-    ui_KeyboardContent.set_height(lv.pct(30))
-    ui_KeyboardContent.set_placeholder_text("Placeholder...")
-    ui_KeyboardContent.set_x(-321)
-    ui_KeyboardContent.set_y(-183)
-    ui_KeyboardContent.set_align(lv.ALIGN.CENTER)
+ui_OverInterface = lv.obj(ui_MainContainer)
+ui_OverInterface.remove_style_all()
+ui_OverInterface.set_width(lv.pct(100))
+ui_OverInterface.set_height(lv.pct(100))
+ui_OverInterface.set_align(lv.ALIGN.CENTER)
+SetFlag(ui_OverInterface, lv.obj.FLAG.HIDDEN, True)
+SetFlag(ui_OverInterface, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_OverInterface, lv.obj.FLAG.SCROLLABLE, False)
 
-    ui_MainKeyboard = lv.keyboard(ui_KeyboardContainer)
-    ui_MainKeyboard.set_width(lv.pct(100))
-    ui_MainKeyboard.set_height(lv.pct(60))
-    ui_MainKeyboard.set_align(lv.ALIGN.BOTTOM_MID)
+ui_ModalContainer = lv.obj(ui_OverInterface)
+ui_ModalContainer.remove_style_all()
+ui_ModalContainer.set_width(lv.pct(100))
+ui_ModalContainer.set_height(lv.pct(100))
+ui_ModalContainer.set_align(lv.ALIGN.CENTER)
+SetFlag(ui_ModalContainer, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_ModalContainer, lv.obj.FLAG.SCROLLABLE, False)
+ui_ModalContainer.set_style_bg_color(lv.color_hex(0x101010), lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_ModalContainer.set_style_bg_opa(100, lv.PART.MAIN | lv.STATE.DEFAULT)
 
-    # if 'ui_KeyboardContent' in globals():
+# ui_OptionsModal = ui_OptionsModal_create(ui_ModalContainer)
+# ui_OptionsModal.set_x(0)
+# ui_OptionsModal.set_y(0)
 
-    ui_MainKeyboard.set_textarea(ui_KeyboardContent)
+# ui_comp_get_child(ui_OptionsModal, "Options_Opt1").add_event_cb(OptionsModal_Options_Opt1_eventhandler,
+#                                                                 lv.EVENT.ALL, None)
+#
+# ui_comp_get_child(ui_OptionsModal, "Options_Opt2").add_event_cb(OptionsModal_Options_Opt2_eventhandler,
+#                                                                 lv.EVENT.ALL, None)
+ui_KeyboardContainer = lv.obj(ui_OverInterface)
+ui_KeyboardContainer.remove_style_all()
+ui_KeyboardContainer.set_width(lv.pct(100))
+ui_KeyboardContainer.set_height(lv.pct(100))
+ui_KeyboardContainer.set_align(lv.ALIGN.CENTER)
+ui_KeyboardContainer.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+ui_KeyboardContainer.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
+SetFlag(ui_KeyboardContainer, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_KeyboardContainer, lv.obj.FLAG.SCROLLABLE, False)
+ui_KeyboardContainer.set_style_bg_color(lv.color_hex(0x000000), lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_KeyboardContainer.set_style_bg_opa(100, lv.PART.MAIN | lv.STATE.DEFAULT)
 
-    # lv.screen_load(ui_Screen1)
+ui_PeerView = lv.obj(ui_KeyboardContainer)
+ui_PeerView.remove_style_all()
+ui_PeerView.set_width(lv.pct(100))
+ui_PeerView.set_height(lv.pct(10))
+ui_PeerView.set_align(lv.ALIGN.CENTER)
+SetFlag(ui_PeerView, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_PeerView, lv.obj.FLAG.SCROLLABLE, False)
+
+ui_KeyboardContent = lv.textarea(ui_KeyboardContainer)
+ui_KeyboardContent.set_width(lv.pct(100))
+ui_KeyboardContent.set_height(lv.pct(30))
+ui_KeyboardContent.set_placeholder_text("Placeholder...")
+ui_KeyboardContent.set_x(-321)
+ui_KeyboardContent.set_y(-183)
+ui_KeyboardContent.set_align(lv.ALIGN.CENTER)
+set_keyboard_content(ui_KeyboardContent.get_label())
+
+ui_MainKeyboard = lv.keyboard(ui_KeyboardContainer)
+ui_MainKeyboard.set_width(lv.pct(100))
+ui_MainKeyboard.set_height(lv.pct(60))
+ui_MainKeyboard.set_align(lv.ALIGN.BOTTOM_MID)
+
+# if 'ui_KeyboardContent' in globals():
+ui_TopGuide = lv.obj(ui_MainContainer)
+ui_TopGuide.remove_style_all()
+ui_TopGuide.set_width(80)
+ui_TopGuide.set_height(45)
+ui_TopGuide.set_align( lv.ALIGN.TOP_MID)
+ui_TopGuide.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_TopGuide.set_flex_align(lv.FLEX_ALIGN.END, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.START)
+SetFlag(ui_TopGuide, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_TopGuide, lv.obj.FLAG.SCROLLABLE, False)
+
+ui_HomeButton = lv.button(ui_TopGuide)
+ui_HomeButton.set_height(40)
+ui_HomeButton.set_width(lv.pct(100))
+ui_HomeButton.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_HomeButton, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_HomeButton, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+ui_HomeButton.set_style_radius( 50, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_HomeButton.set_style_bg_color(lv.color_hex(0x2196F3), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_HomeButton.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+
+ui_HomeButtonText = lv.label(ui_HomeButton)
+ui_HomeButtonText.set_text("Home")
+ui_HomeButtonText.set_width(lv.SIZE_CONTENT)	# 1
+ui_HomeButtonText.set_height(lv.SIZE_CONTENT)   # 1
+ui_HomeButtonText.set_align( lv.ALIGN.CENTER)
+ui_HomeButtonText.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_HomeButtonText.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+
+ui_HomeButton.add_event_cb(HomeButton_eventhandler, lv.EVENT.ALL, None)
+ui_NotificationsContainer = lv.obj(ui_MainContainer)
+ui_NotificationsContainer.remove_style_all()
+ui_NotificationsContainer.set_height(80)
+ui_NotificationsContainer.set_width(lv.pct(40))
+ui_NotificationsContainer.set_align( lv.ALIGN.TOP_RIGHT)
+ui_NotificationsContainer.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+ui_NotificationsContainer.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.END)
+SetFlag(ui_NotificationsContainer, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_NotificationsContainer, lv.obj.FLAG.SCROLLABLE, False)
+ui_NotificationsContainer.set_style_pad_left( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_NotificationsContainer.set_style_pad_right( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_NotificationsContainer.set_style_pad_top( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_NotificationsContainer.set_style_pad_bottom( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+
+# ui_Notification = ui_Notification_create(ui_NotificationsContainer)
+# ui_Notification.set_x(0)
+# ui_Notification.set_y(0)
+
+ui_MainKeyboard.set_textarea(ui_KeyboardContent)
+
+lvgl_app_objects: list[LVGLToObjectBindings] = []
+
+lvgl_object_bindings: list[LVGLToObjectBindings] = []
+
+
+class BeijingTime:
+    def __init__(self):
+        self.sync_time()
+        self.update_time()
+
+    def sync_time(self):
+        pass
+        # try:
+        #     ntptime.settime()
+        #     print("Time synchronized with NTP server")
+        # except:
+        #     print("Failed to sync time with NTP server")
+
+    def update_time(self):
+        current_time = utime.localtime()
+        # Beijing time is UTC+8
+        hour = (current_time[3] + 8) % 24
+        self.current_time_str = "{:02d}:{:02d}".format(hour, current_time[4])
+
+    async def tick(self):
+        while True:
+            self.update_time()
+            ui_Time.set_text(self.current_time_str)
+            lv.task_handler()
+            await asyncio.sleep(1)
+
+async def data_to_lvgl_every_second():
+    while True:
+        # ui_Time.set_text(get_local_current_time())
+        if con.is_wifi_connected():
+            ui_WifiStatus.set_text("Wifi: Connected")
+        else:
+            ui_WifiStatus.set_text("Wifi: Disconnected")
+        await asyncio.sleep(1)
+
+
+def refresh_lvgl_app_objects(apps: list[Application]):
+    global lvgl_app_objects
+    for obj in lvgl_app_objects:
+        obj.get().delete()
+        del obj
+
+    lvgl_app_objects.clear()
+    gc.collect()
+
+    for app in apps:
+        ui_App = ui_App_create(ui_AppInterface, app.app_color)
+        ui_App.set_x(0)
+        ui_App.set_y(0)
+        lvgl_app_objects.append(LVGLToObjectBindings(ui_App, app.app_name))
+
+
+async def update(): # The main function updates the screen.
+    # time = BeijingTime()
+    task1 = asyncio.create_task(data_to_lvgl_every_second())
+    await asyncio.gather(task1)
+

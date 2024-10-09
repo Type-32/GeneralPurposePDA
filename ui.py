@@ -171,6 +171,91 @@ def SwitchTheme(val):
 
 # COMPONENTS
 
+ # COMPONENT App
+
+def comp_App_AppButton_eventhandler(event_struct):
+   target = event_struct.get_target()
+   comp_App = ui_comp_get_root_from_child(target, "App")
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def ui_App_create(comp_parent):
+    cui_App = lv.obj(comp_parent)
+    cui_App.remove_style_all()
+    cui_App.set_width(80)
+    cui_App.set_height(80)
+    cui_App.set_x(-200)
+    cui_App.set_y(-30)
+    cui_App.set_align( lv.ALIGN.CENTER)
+    SetFlag(cui_App, lv.obj.FLAG.CLICKABLE, False)
+    SetFlag(cui_App, lv.obj.FLAG.SCROLLABLE, False)
+    cui_AppButton = lv.button(cui_App)
+    cui_AppButton.set_width(60)
+    cui_AppButton.set_height(60)
+    cui_AppButton.set_align( lv.ALIGN.TOP_MID)
+    SetFlag(cui_AppButton, lv.obj.FLAG.SCROLLABLE, False)
+    SetFlag(cui_AppButton, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+    cui_AppButton.set_style_bg_color(lv.color_hex(0x5385ED), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_AppButton.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_AppIcon = lv.label(cui_AppButton)
+    cui_AppIcon.set_text("BYD")
+    cui_AppIcon.set_width(lv.SIZE_CONTENT)	# 1
+    cui_AppIcon.set_height(lv.SIZE_CONTENT)   # 1
+    cui_AppIcon.set_align( lv.ALIGN.CENTER)
+    cui_AppButton.add_event_cb(comp_App_AppButton_eventhandler, lv.EVENT.ALL, None)
+    cui_AppTitle = lv.label(cui_App)
+    cui_AppTitle.set_text("AppTitle")
+    cui_AppTitle.set_width(lv.SIZE_CONTENT)	# 1
+    cui_AppTitle.set_height(lv.SIZE_CONTENT)   # 1
+    cui_AppTitle.set_align( lv.ALIGN.BOTTOM_MID)
+    _ui_comp_table[id(cui_App)]= {"App" : cui_App,"AppButton" : cui_AppButton,"AppButton_AppIcon" : cui_AppIcon,"AppTitle" : cui_AppTitle, "_CompName" : "App"}
+    return cui_App
+
+ # COMPONENT Notification
+
+def comp_Notification_Notification_eventhandler(event_struct):
+   target = event_struct.get_target()
+   comp_Notification = ui_comp_get_root_from_child(target, "Notification")
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def ui_Notification_create(comp_parent):
+    cui_Notification = lv.button(comp_parent)
+    cui_Notification.set_height(70)
+    cui_Notification.set_width(lv.pct(100))
+    cui_Notification.set_align( lv.ALIGN.CENTER)
+    cui_Notification.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+    cui_Notification.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+    SetFlag(cui_Notification, lv.obj.FLAG.SCROLLABLE, False)
+    SetFlag(cui_Notification, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+    cui_Notification.set_style_bg_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_Notification.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_color(lv.color_hex(0x000000), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_opa(50, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_width( 1, lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_Notification.set_style_outline_pad( 0, lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_NotificationTitle = lv.label(cui_Notification)
+    cui_NotificationTitle.set_text("Title")
+    cui_NotificationTitle.set_width(lv.pct(100))
+    cui_NotificationTitle.set_height(lv.SIZE_CONTENT)   # 100
+    cui_NotificationTitle.set_align( lv.ALIGN.CENTER)
+    cui_NotificationTitle.set_style_text_color(lv.color_hex(0x007EE3), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_NotificationTitle.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_NotificationText = lv.label(cui_Notification)
+    cui_NotificationText.set_text("text\nsasdsa")
+    cui_NotificationText.set_width(lv.pct(100))
+    cui_NotificationText.set_height(lv.SIZE_CONTENT)   # 100
+    cui_NotificationText.set_align( lv.ALIGN.CENTER)
+    cui_NotificationText.set_style_text_color(lv.color_hex(0x000000), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_NotificationText.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_Notification.add_event_cb(comp_Notification_Notification_eventhandler, lv.EVENT.ALL, None)
+    _ui_comp_table[id(cui_Notification)]= {"Notification" : cui_Notification,"NotificationTitle" : cui_NotificationTitle,"NotificationText" : cui_NotificationText, "_CompName" : "Notification"}
+    return cui_Notification
+
  # COMPONENT OptionsModal
 def ui_OptionsModal_create(comp_parent):
     cui_OptionsModal = lv.obj(comp_parent)
@@ -235,46 +320,6 @@ def ui_OptionsModal_create(comp_parent):
     _ui_comp_table[id(cui_OptionsModal)]= {"OptionsModal" : cui_OptionsModal,"ModalTitle" : cui_ModalTitle,"ModalContent" : cui_ModalContent,"Options" : cui_Options,"Options_Opt1" : cui_Opt1,"Options_Opt1_Opt1Text" : cui_Opt1Text,"Options_Container9" : cui_Container9,"Options_Opt2" : cui_Opt2,"Options_Opt2_Option2Text" : cui_Option2Text, "_CompName" : "OptionsModal"}
     return cui_OptionsModal
 
- # COMPONENT App
-
-def comp_App_AppButton_eventhandler(event_struct):
-   target = event_struct.get_target()
-   comp_App = ui_comp_get_root_from_child(target, "App")
-   event = event_struct.code
-   if event == lv.EVENT.CLICKED and True:
-      ( event_struct )
-   return
-
-def ui_App_create(comp_parent):
-    cui_App = lv.obj(comp_parent)
-    cui_App.remove_style_all()
-    cui_App.set_width(80)
-    cui_App.set_height(80)
-    cui_App.set_x(-200)
-    cui_App.set_y(-30)
-    cui_App.set_align( lv.ALIGN.CENTER)
-    SetFlag(cui_App, lv.obj.FLAG.CLICKABLE, False)
-    SetFlag(cui_App, lv.obj.FLAG.SCROLLABLE, False)
-    cui_AppButton = lv.button(cui_App)
-    cui_AppButton.set_width(60)
-    cui_AppButton.set_height(60)
-    cui_AppButton.set_align( lv.ALIGN.TOP_MID)
-    SetFlag(cui_AppButton, lv.obj.FLAG.SCROLLABLE, False)
-    SetFlag(cui_AppButton, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
-    cui_AppIcon = lv.label(cui_AppButton)
-    cui_AppIcon.set_text("BYD")
-    cui_AppIcon.set_width(lv.SIZE_CONTENT)	# 1
-    cui_AppIcon.set_height(lv.SIZE_CONTENT)   # 1
-    cui_AppIcon.set_align( lv.ALIGN.CENTER)
-    cui_AppButton.add_event_cb(comp_App_AppButton_eventhandler, lv.EVENT.ALL, None)
-    cui_AppTitle = lv.label(cui_App)
-    cui_AppTitle.set_text("AppTitle")
-    cui_AppTitle.set_width(lv.SIZE_CONTENT)	# 1
-    cui_AppTitle.set_height(lv.SIZE_CONTENT)   # 1
-    cui_AppTitle.set_align( lv.ALIGN.BOTTOM_MID)
-    _ui_comp_table[id(cui_App)]= {"App" : cui_App,"AppButton" : cui_AppButton,"AppButton_AppIcon" : cui_AppIcon,"AppTitle" : cui_AppTitle, "_CompName" : "App"}
-    return cui_App
-
 ui____initial_actions0 = lv.obj()
 
 def OptionsModal_Options_Opt1_eventhandler(event_struct):
@@ -285,6 +330,13 @@ def OptionsModal_Options_Opt1_eventhandler(event_struct):
    return
 
 def OptionsModal_Options_Opt2_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def HomeButton_eventhandler(event_struct):
    target = event_struct.get_target()
    event = event_struct.code
    if event == lv.EVENT.CLICKED and True:
@@ -321,7 +373,7 @@ ui_InfoHeader.set_flex_flow(lv.FLEX_FLOW.ROW)
 ui_InfoHeader.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
 SetFlag(ui_InfoHeader, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_InfoHeader, lv.obj.FLAG.SCROLLABLE, False)
-ui_InfoHeader.set_style_bg_color(lv.color_hex(0xCCCCCC), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_InfoHeader.set_style_bg_color(lv.color_hex(0x2196F3), lv.PART.MAIN | lv.STATE.DEFAULT )
 ui_InfoHeader.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
 
 ui_InfoHeader.set_style_pad_left( 4, lv.PART.SCROLLBAR | lv.STATE.DEFAULT )
@@ -344,6 +396,8 @@ ui_WifiStatus.set_text("Wifi: Not Connected")
 ui_WifiStatus.set_width(lv.SIZE_CONTENT)	# 1
 ui_WifiStatus.set_height(lv.SIZE_CONTENT)   # 1
 ui_WifiStatus.set_align( lv.ALIGN.CENTER)
+ui_WifiStatus.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_WifiStatus.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
 
 ui_MiddleSection = lv.obj(ui_InfoHeader)
 ui_MiddleSection.remove_style_all()
@@ -376,6 +430,8 @@ ui_Battery.set_text("90% Charge")
 ui_Battery.set_width(lv.SIZE_CONTENT)	# 1
 ui_Battery.set_height(lv.SIZE_CONTENT)   # 1
 ui_Battery.set_align( lv.ALIGN.CENTER)
+ui_Battery.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_Battery.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
 
 ui_AppInterface = lv.obj(ui_Interface)
 ui_AppInterface.remove_style_all()
@@ -390,8 +446,8 @@ ui_AppInterface.set_style_pad_left( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
 ui_AppInterface.set_style_pad_right( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
 ui_AppInterface.set_style_pad_top( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
 ui_AppInterface.set_style_pad_bottom( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
-ui_AppInterface.set_style_pad_row( 10, lv.PART.MAIN | lv.STATE.DEFAULT )
-ui_AppInterface.set_style_pad_column( 10, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_AppInterface.set_style_pad_row( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_AppInterface.set_style_pad_column( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
 
 ui_App = ui_App_create(ui_AppInterface)
 ui_App.set_x(-200)
@@ -457,6 +513,52 @@ ui_MainKeyboard.set_height(lv.pct(60))
 ui_MainKeyboard.set_align( lv.ALIGN.BOTTOM_MID)
 
 #if 'ui_KeyboardContent' in globals():
+ui_TopGuide = lv.obj(ui_MainContainer)
+ui_TopGuide.remove_style_all()
+ui_TopGuide.set_width(80)
+ui_TopGuide.set_height(45)
+ui_TopGuide.set_align( lv.ALIGN.TOP_MID)
+ui_TopGuide.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_TopGuide.set_flex_align(lv.FLEX_ALIGN.END, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.START)
+SetFlag(ui_TopGuide, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_TopGuide, lv.obj.FLAG.SCROLLABLE, False)
+
+ui_HomeButton = lv.button(ui_TopGuide)
+ui_HomeButton.set_height(40)
+ui_HomeButton.set_width(lv.pct(100))
+ui_HomeButton.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_HomeButton, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_HomeButton, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+ui_HomeButton.set_style_radius( 50, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_HomeButton.set_style_bg_color(lv.color_hex(0x2196F3), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_HomeButton.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+
+ui_HomeButtonText = lv.label(ui_HomeButton)
+ui_HomeButtonText.set_text("Home")
+ui_HomeButtonText.set_width(lv.SIZE_CONTENT)	# 1
+ui_HomeButtonText.set_height(lv.SIZE_CONTENT)   # 1
+ui_HomeButtonText.set_align( lv.ALIGN.CENTER)
+ui_HomeButtonText.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_HomeButtonText.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+
+ui_HomeButton.add_event_cb(HomeButton_eventhandler, lv.EVENT.ALL, None)
+ui_NotificationsContainer = lv.obj(ui_MainContainer)
+ui_NotificationsContainer.remove_style_all()
+ui_NotificationsContainer.set_height(80)
+ui_NotificationsContainer.set_width(lv.pct(40))
+ui_NotificationsContainer.set_align( lv.ALIGN.TOP_RIGHT)
+ui_NotificationsContainer.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+ui_NotificationsContainer.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.END)
+SetFlag(ui_NotificationsContainer, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_NotificationsContainer, lv.obj.FLAG.SCROLLABLE, False)
+ui_NotificationsContainer.set_style_pad_left( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_NotificationsContainer.set_style_pad_right( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_NotificationsContainer.set_style_pad_top( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_NotificationsContainer.set_style_pad_bottom( 5, lv.PART.MAIN | lv.STATE.DEFAULT )
+
+ui_Notification = ui_Notification_create(ui_NotificationsContainer)
+ui_Notification.set_x(0)
+ui_Notification.set_y(0)
 
 ui_MainKeyboard.set_textarea(ui_KeyboardContent)
 

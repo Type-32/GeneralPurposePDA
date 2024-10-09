@@ -1,3 +1,4 @@
+import time
 from micropython import const  # NOQA
 from i2c import I2C
 import gt911
@@ -6,7 +7,7 @@ import task_handler
 import lvgl as lv  # NOQA
 import rgb_display
 
-
+# SETUP block
 _WIDTH = const(800)
 _HEIGHT = const(480)
 
@@ -118,6 +119,8 @@ display = rgb_display.RGBDisplay(
     rgb565_byte_swap=False
 )
 
+# INIT
+
 display.set_power(True)
 display.init()
 display.set_backlight(100)
@@ -146,7 +149,17 @@ if indev.hw_size != (_WIDTH, _HEIGHT):
 # buttonLabel = lv.label(button)
 # buttonLabel.set_text('Hello, World!')
 
-import osui
-osui.main()
+import pdaos
+import asyncio
+# main.py should not be importing osui.py.
 
-task_handler.TaskHandler()
+if __name__ == "__main__":
+    th = task_handler.TaskHandler()
+
+    asyncio.run(pdaos.main())
+
+
+
+# while True:
+#     task_handler.TaskHandler()
+#     time.sleep(0.05)
