@@ -15,7 +15,20 @@ I use macOS. I don't know if this will work on Windows or Linux, but I'll try to
 
 I'm programming an Operating System for this little thing. I'm going to call it **PDA-OS**. Name is subject to change.
 
-The following are mermaid graphs that illustrates the design and architecture of the OS.
+The following are graphs that illustrates the design and architecture of the OS.
+
+### Eraser.io Graphs
+[View on Eraser![](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8/preview?elements=7VZFpVqGDRQeEpiym1F4xw&type=embed)](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8?elements=7VZFpVqGDRQeEpiym1F4xw)
+
+[View on Eraser![](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8/preview?elements=q1_MrWodHduFDftwzvMJ2g&type=embed)](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8?elements=q1_MrWodHduFDftwzvMJ2g)
+
+[View on Eraser![](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8/preview?elements=imNGCxBYVQlN6b_r4oDvcA&type=embed)](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8?elements=imNGCxBYVQlN6b_r4oDvcA)
+
+[View on Eraser![](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8/preview?elements=wPs7d8Z0bUTKdvVxWrPIpg&type=embed)](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8?elements=wPs7d8Z0bUTKdvVxWrPIpg)
+
+[View on Eraser![](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8/preview?elements=wWReXQhWIR3sXBY1d6hh0g&type=embed)](https://app.eraser.io/workspace/0DAncmHruwPnXU1Gm9y8?elements=wWReXQhWIR3sXBY1d6hh0g)
+
+### Mermaid Graphs
 ```mermaid
 graph TD
     subgraph "Hardware Layer"
