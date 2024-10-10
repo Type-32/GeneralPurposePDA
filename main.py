@@ -54,22 +54,22 @@ TOUCH_DEVICE = I2C.Device(
     reg_bits=gt911.BITS
 )
 
-_DATA15 = const(10)  # B7
-_DATA14 = const(17)  # B6
-_DATA13 = const(18)  # B5
-_DATA12 = const(38)  # B4
-_DATA11 = const(14)  # B3
+_DATA15 = const(40)  # R7
+_DATA14 = const(41)  # R6
+_DATA13 = const(42)  # R5
+_DATA12 = const(2)   # R4
+_DATA11 = const(1)   # R3
 _DATA10 = const(21)  # G7
-_DATA9 = const(47)  # G6
-_DATA8 = const(48)  # G5
-_DATA7 = const(45)  # G4
-_DATA6 = const(0)  # G3
-_DATA5 = const(39)  # G2
-_DATA4 = const(40)  # R7
-_DATA3 = const(41)  # R6
-_DATA2 = const(42)  # R5
-_DATA1 = const(2)  # R4
-_DATA0 = const(1)  # R3
+_DATA9 = const(47)   # G6
+_DATA8 = const(48)   # G5
+_DATA7 = const(45)   # G4
+_DATA6 = const(0)    # G3
+_DATA5 = const(39)   # G2
+_DATA4 = const(10)   # B7
+_DATA3 = const(17)   # B6
+_DATA2 = const(18)   # B5
+_DATA1 = const(38)   # B4
+_DATA0 = const(14)   # B3
 
 bus = lcd_bus.RGBBus(
     hsync=_HSYNC,
