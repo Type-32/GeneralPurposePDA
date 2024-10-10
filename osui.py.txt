@@ -1,6 +1,0 @@
-import lvgl as lv
-import ui
-import ui_images
-
-def main():
-    pass

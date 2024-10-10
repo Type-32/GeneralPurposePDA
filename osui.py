@@ -4,7 +4,8 @@ import utime
 import connectivity as con
 import asyncio
 
-from pdaos import Application
+from pdaos_lib import Application
+
 
 # import ui
 # import ui_images
@@ -19,7 +20,7 @@ class LVGLToObjectBindings:
 
 
 dispp = lv.display_get_default()
-theme = lv.theme_default_init(dispp, lv.palette_main(lv.PALETTE.BLUE), lv.palette_main(lv.PALETTE.BLUE), False, lv.font_default())
+theme = lv.theme_default_init(dispp, lv.palette_main(lv.PALETTE.BLUE), lv.palette_main(lv.PALETTE.RED), False, lv.font_default())
 dispp.set_theme(theme)
 
 _ui_comp_table = {}
@@ -117,7 +118,7 @@ def comp_App_AppButton_eventhandler(event_struct):
         (event_struct)
     return
 
-def ui_App_create(comp_parent, bg_color_hex: int = 0x5385ED):
+def ui_App_create(comp_parent, app_title: str = "Untitled App", app_icon: str = "??", bg_color_hex: int = 0x5385ED):
     cui_App = lv.obj(comp_parent)
     cui_App.remove_style_all()
     cui_App.set_width(80)
@@ -136,13 +137,13 @@ def ui_App_create(comp_parent, bg_color_hex: int = 0x5385ED):
     cui_AppButton.set_style_bg_color(lv.color_hex(bg_color_hex), lv.PART.MAIN | lv.STATE.DEFAULT )
     cui_AppButton.set_style_bg_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
     cui_AppIcon = lv.label(cui_AppButton)
-    cui_AppIcon.set_text("BYD")
+    cui_AppIcon.set_text(app_icon)
     cui_AppIcon.set_width(lv.SIZE_CONTENT)  # 1
     cui_AppIcon.set_height(lv.SIZE_CONTENT)  # 1
     cui_AppIcon.set_align(lv.ALIGN.CENTER)
     cui_AppButton.add_event_cb(comp_App_AppButton_eventhandler, lv.EVENT.ALL, None)
     cui_AppTitle = lv.label(cui_App)
-    cui_AppTitle.set_text("AppTitle")
+    cui_AppTitle.set_text(app_title)
     cui_AppTitle.set_width(lv.SIZE_CONTENT)  # 1
     cui_AppTitle.set_height(lv.SIZE_CONTENT)  # 1
     cui_AppTitle.set_align(lv.ALIGN.BOTTOM_MID)
@@ -244,11 +245,11 @@ def get_local_current_time():
     return "{:02d}:{:02d}:{:02d}".format(current_time[3], current_time[4], current_time[5])
 
 
-ui_Screen1 = lv.screen_active()
-ui_Screen1.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
-SetFlag(ui_Screen1, lv.obj.FLAG.SCROLLABLE, False)
+ui_mainScreen = lv.screen_active()
+ui_mainScreen.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
+SetFlag(ui_mainScreen, lv.obj.FLAG.SCROLLABLE, False)
 
-ui_MainContainer = lv.obj(ui_Screen1)
+ui_MainContainer = lv.obj(ui_mainScreen)
 ui_MainContainer.remove_style_all()
 ui_MainContainer.set_width(lv.pct(100))
 ui_MainContainer.set_height(lv.pct(100))
@@ -518,7 +519,7 @@ def refresh_lvgl_app_objects(apps: list[Application]):
     gc.collect()
 
     for app in apps:
-        ui_App = ui_App_create(ui_AppInterface, app.get_color())
+        ui_App = ui_App_create(ui_AppInterface, app.get_name(), app.get_icon(), app.get_color())
         ui_App.set_x(0)
         ui_App.set_y(0)
         lvgl_app_objects.append(LVGLToObjectBindings(ui_App, app.get_name()))
