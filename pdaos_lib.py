@@ -1,3 +1,12 @@
+library_version: str = "0.0.1"
+os_version: str = "0.0.1"
+
+def get_os_version() -> str:
+    return os_version
+
+def get_library_version() -> str:
+    return library_version
+
 class Application:
     def __init__(self, name: str = "Untitled App", icon: str = "??", screen: str = "untitled_screen", color: int = 0x5385ED, tick_update: callable = None, second_update: callable = None):
         self.app_name = name
