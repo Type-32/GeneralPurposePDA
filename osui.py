@@ -41,33 +41,33 @@ def SetFlag(obj, flag, value: bool):
 # COMPONENTS
 
 # COMPONENT OptionsModal
-def ui_OptionsModal_create(comp_parent):
+def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Content", opt1_label: str = "Option 1", opt2_label: str = "Option 2", opt1: callable = None, opt2: callable = None):
     cui_OptionsModal = lv.obj(comp_parent)
     cui_OptionsModal.set_width(lv.pct(60))
-    cui_OptionsModal.set_height(lv.SIZE_CONTENT)  # 50
-    cui_OptionsModal.set_align(lv.ALIGN.CENTER)
+    cui_OptionsModal.set_height(lv.SIZE_CONTENT)   # 50
+    cui_OptionsModal.set_align( lv.ALIGN.CENTER)
     cui_OptionsModal.set_flex_flow(lv.FLEX_FLOW.COLUMN)
     cui_OptionsModal.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
     SetFlag(cui_OptionsModal, lv.obj.FLAG.SCROLLABLE, False)
     cui_ModalTitle = lv.label(cui_OptionsModal)
-    cui_ModalTitle.set_text("ModalTitle")
+    cui_ModalTitle.set_text(title)
     cui_ModalTitle.set_width(lv.pct(100))
-    cui_ModalTitle.set_height(lv.SIZE_CONTENT)  # 1
-    cui_ModalTitle.set_style_text_color(lv.color_hex(0x4C4C4C), lv.PART.MAIN | lv.STATE.DEFAULT)
-    cui_ModalTitle.set_style_text_opa(255, lv.PART.MAIN | lv.STATE.DEFAULT)
-    cui_ModalTitle.set_style_text_letter_space(1, lv.PART.MAIN | lv.STATE.DEFAULT)
-    cui_ModalTitle.set_style_text_line_space(0, lv.PART.MAIN | lv.STATE.DEFAULT)
-    # cui_ModalTitle.set_style_text_font(lv.font_montserrat_18, lv.PART.MAIN | lv.STATE.DEFAULT)
+    cui_ModalTitle.set_height(lv.SIZE_CONTENT)   # 1
+    cui_ModalTitle.set_style_text_color(lv.color_hex(0x4C4C4C), lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_ModalTitle.set_style_text_opa(255, lv.PART.MAIN| lv.STATE.DEFAULT )
+    cui_ModalTitle.set_style_text_letter_space( 1, lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_ModalTitle.set_style_text_line_space( 0, lv.PART.MAIN | lv.STATE.DEFAULT )
+    cui_ModalTitle.set_style_text_font( lv.font_montserrat_18, lv.PART.MAIN | lv.STATE.DEFAULT )
     cui_ModalContent = lv.label(cui_OptionsModal)
-    cui_ModalContent.set_text("text")
+    cui_ModalContent.set_text(content)
     cui_ModalContent.set_width(lv.pct(100))
-    cui_ModalContent.set_height(lv.SIZE_CONTENT)  # 1
-    cui_ModalContent.set_align(lv.ALIGN.CENTER)
+    cui_ModalContent.set_height(lv.SIZE_CONTENT)   # 1
+    cui_ModalContent.set_align( lv.ALIGN.CENTER)
     cui_Options = lv.obj(cui_OptionsModal)
     cui_Options.remove_style_all()
     cui_Options.set_height(40)
     cui_Options.set_width(lv.pct(100))
-    cui_Options.set_align(lv.ALIGN.CENTER)
+    cui_Options.set_align( lv.ALIGN.CENTER)
     cui_Options.set_flex_flow(lv.FLEX_FLOW.ROW)
     cui_Options.set_flex_align(lv.FLEX_ALIGN.SPACE_EVENLY, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
     SetFlag(cui_Options, lv.obj.FLAG.CLICKABLE, False)
@@ -75,38 +75,33 @@ def ui_OptionsModal_create(comp_parent):
     cui_Opt1 = lv.button(cui_Options)
     cui_Opt1.set_height(50)
     cui_Opt1.set_flex_grow(1)
-    cui_Opt1.set_align(lv.ALIGN.CENTER)
+    cui_Opt1.set_align( lv.ALIGN.CENTER)
     SetFlag(cui_Opt1, lv.obj.FLAG.SCROLLABLE, False)
     SetFlag(cui_Opt1, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
     cui_Opt1Text = lv.label(cui_Opt1)
-    cui_Opt1Text.set_text("Option1")
-    cui_Opt1Text.set_width(lv.SIZE_CONTENT)  # 1
-    cui_Opt1Text.set_height(lv.SIZE_CONTENT)  # 1
-    cui_Opt1Text.set_align(lv.ALIGN.CENTER)
+    cui_Opt1Text.set_text(opt1_label)
+    cui_Opt1Text.set_width(lv.SIZE_CONTENT)	# 1
+    cui_Opt1Text.set_height(lv.SIZE_CONTENT)   # 1
+    cui_Opt1Text.set_align( lv.ALIGN.CENTER)
     cui_Container9 = lv.obj(cui_Options)
     cui_Container9.remove_style_all()
     cui_Container9.set_width(10)
     cui_Container9.set_height(lv.pct(100))
-    cui_Container9.set_align(lv.ALIGN.CENTER)
+    cui_Container9.set_align( lv.ALIGN.CENTER)
     SetFlag(cui_Container9, lv.obj.FLAG.CLICKABLE, False)
     SetFlag(cui_Container9, lv.obj.FLAG.SCROLLABLE, False)
     cui_Opt2 = lv.button(cui_Options)
     cui_Opt2.set_height(50)
     cui_Opt2.set_flex_grow(1)
-    cui_Opt2.set_align(lv.ALIGN.CENTER)
+    cui_Opt2.set_align( lv.ALIGN.CENTER)
     SetFlag(cui_Opt2, lv.obj.FLAG.SCROLLABLE, False)
     SetFlag(cui_Opt2, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
     cui_Option2Text = lv.label(cui_Opt2)
-    cui_Option2Text.set_text("Option2")
-    cui_Option2Text.set_width(lv.SIZE_CONTENT)  # 1
-    cui_Option2Text.set_height(lv.SIZE_CONTENT)  # 1
-    cui_Option2Text.set_align(lv.ALIGN.CENTER)
-    _ui_comp_table[id(cui_OptionsModal)] = {"OptionsModal": cui_OptionsModal, "ModalTitle": cui_ModalTitle,
-                                            "ModalContent": cui_ModalContent, "Options": cui_Options,
-                                            "Options_Opt1": cui_Opt1, "Options_Opt1_Opt1Text": cui_Opt1Text,
-                                            "Options_Container9": cui_Container9, "Options_Opt2": cui_Opt2,
-                                            "Options_Opt2_Option2Text": cui_Option2Text,
-                                            "_CompName": "OptionsModal"}
+    cui_Option2Text.set_text(opt2_label)
+    cui_Option2Text.set_width(lv.SIZE_CONTENT)	# 1
+    cui_Option2Text.set_height(lv.SIZE_CONTENT)   # 1
+    cui_Option2Text.set_align( lv.ALIGN.CENTER)
+    _ui_comp_table[id(cui_OptionsModal)]= {"OptionsModal" : cui_OptionsModal,"ModalTitle" : cui_ModalTitle,"ModalContent" : cui_ModalContent,"Options" : cui_Options,"Options_Opt1" : cui_Opt1,"Options_Opt1_Opt1Text" : cui_Opt1Text,"Options_Container9" : cui_Container9,"Options_Opt2" : cui_Opt2,"Options_Opt2_Option2Text" : cui_Option2Text, "_CompName" : "OptionsModal"}
     return cui_OptionsModal
 
 # COMPONENT App
@@ -121,16 +116,16 @@ def comp_App_AppButton_eventhandler(event_struct):
 def ui_App_create(comp_parent, app_title: str = "Untitled App", app_icon: str = "??", bg_color_hex: int = 0x5385ED):
     cui_App = lv.obj(comp_parent)
     cui_App.remove_style_all()
-    cui_App.set_width(80)
-    cui_App.set_height(80)
+    cui_App.set_width(100)
+    cui_App.set_height(100)
     cui_App.set_x(-200)
     cui_App.set_y(-30)
     cui_App.set_align(lv.ALIGN.CENTER)
     SetFlag(cui_App, lv.obj.FLAG.CLICKABLE, False)
     SetFlag(cui_App, lv.obj.FLAG.SCROLLABLE, False)
     cui_AppButton = lv.button(cui_App)
-    cui_AppButton.set_width(60)
-    cui_AppButton.set_height(60)
+    cui_AppButton.set_width(80)
+    cui_AppButton.set_height(80)
     cui_AppButton.set_align(lv.ALIGN.TOP_MID)
     SetFlag(cui_AppButton, lv.obj.FLAG.SCROLLABLE, False)
     SetFlag(cui_AppButton, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
@@ -262,15 +257,13 @@ ui_Interface.remove_style_all()
 ui_Interface.set_width(lv.pct(100))
 ui_Interface.set_height(lv.pct(100))
 ui_Interface.set_align(lv.ALIGN.CENTER)
-ui_Interface.set_flex_flow(lv.FLEX_FLOW.COLUMN)
-ui_Interface.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
 SetFlag(ui_Interface, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_Interface, lv.obj.FLAG.SCROLLABLE, False)
 
 ui_InfoHeader = lv.obj(ui_Interface)
 ui_InfoHeader.remove_style_all()
-ui_InfoHeader.set_height(20)
 ui_InfoHeader.set_width(lv.pct(100))
+ui_InfoHeader.set_height(lv.pct(5))
 ui_InfoHeader.set_align(lv.ALIGN.TOP_MID)
 ui_InfoHeader.set_flex_flow(lv.FLEX_FLOW.ROW)
 ui_InfoHeader.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
@@ -340,7 +333,7 @@ ui_AppInterface = lv.obj(ui_Interface)
 ui_AppInterface.remove_style_all()
 ui_AppInterface.set_width(lv.pct(100))
 ui_AppInterface.set_height(lv.pct(95))
-ui_AppInterface.set_align(lv.ALIGN.CENTER)
+ui_AppInterface.set_align( lv.ALIGN.BOTTOM_MID)
 ui_AppInterface.set_flex_flow(lv.FLEX_FLOW.ROW)
 ui_AppInterface.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
 SetFlag(ui_AppInterface, lv.obj.FLAG.CLICKABLE, False)
@@ -349,12 +342,26 @@ ui_AppInterface.set_style_pad_left(30, lv.PART.MAIN | lv.STATE.DEFAULT)
 ui_AppInterface.set_style_pad_right(30, lv.PART.MAIN | lv.STATE.DEFAULT)
 ui_AppInterface.set_style_pad_top(30, lv.PART.MAIN | lv.STATE.DEFAULT)
 ui_AppInterface.set_style_pad_bottom(30, lv.PART.MAIN | lv.STATE.DEFAULT)
-ui_AppInterface.set_style_pad_row(10, lv.PART.MAIN | lv.STATE.DEFAULT)
-ui_AppInterface.set_style_pad_column(10, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface.set_style_pad_row(30, lv.PART.MAIN | lv.STATE.DEFAULT)
+ui_AppInterface.set_style_pad_column(30, lv.PART.MAIN | lv.STATE.DEFAULT)
 
 # ui_App = ui_App_create(ui_AppInterface)
 # ui_App.set_x(-200)
 # ui_App.set_y(-30)
+
+ui_ApplicationScreen = lv.obj(ui_Interface)
+ui_ApplicationScreen.remove_style_all()
+ui_ApplicationScreen.set_width(lv.pct(100))
+ui_ApplicationScreen.set_height(lv.pct(95))
+ui_ApplicationScreen.set_align( lv.ALIGN.BOTTOM_MID)
+SetFlag(ui_ApplicationScreen, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_ApplicationScreen, lv.obj.FLAG.SCROLLABLE, False)
+ui_ApplicationScreen.set_style_pad_left( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_ApplicationScreen.set_style_pad_right( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_ApplicationScreen.set_style_pad_top( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_ApplicationScreen.set_style_pad_bottom( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_ApplicationScreen.set_style_pad_row( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_ApplicationScreen.set_style_pad_column( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
 
 ui_OverInterface = lv.obj(ui_MainContainer)
 ui_OverInterface.remove_style_all()
@@ -422,7 +429,7 @@ ui_MainKeyboard.set_align(lv.ALIGN.BOTTOM_MID)
 ui_TopGuide = lv.obj(ui_MainContainer)
 ui_TopGuide.remove_style_all()
 ui_TopGuide.set_width(80)
-ui_TopGuide.set_height(45)
+ui_TopGuide.set_height(50)
 ui_TopGuide.set_align( lv.ALIGN.TOP_MID)
 ui_TopGuide.set_flex_flow(lv.FLEX_FLOW.ROW)
 ui_TopGuide.set_flex_align(lv.FLEX_ALIGN.END, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.START)
@@ -430,7 +437,7 @@ SetFlag(ui_TopGuide, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_TopGuide, lv.obj.FLAG.SCROLLABLE, False)
 
 ui_HomeButton = lv.button(ui_TopGuide)
-ui_HomeButton.set_height(40)
+ui_HomeButton.set_height(45)
 ui_HomeButton.set_width(lv.pct(100))
 ui_HomeButton.set_align( lv.ALIGN.CENTER)
 SetFlag(ui_HomeButton, lv.obj.FLAG.SCROLLABLE, False)

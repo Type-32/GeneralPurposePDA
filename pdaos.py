@@ -1,37 +1,74 @@
+import gc
+
 import osui
 import asyncio
 
-from pdaos_lib import Application
+from pdaos_lib import Application, AsyncJob
 
-apps: list[Application] = []
-focused_app: Application = None
-loaded_os: bool = False
+APPS: list[Application] = []
+FOCUSED_APP: Application | None = None
+OS_LOADED: bool = False
+ASYNC_JOBS: list[AsyncJob] = []
+
 
 def has_focused_app() -> bool:
-    return focused_app is not None
+    return FOCUSED_APP is not None
 
 
 def add_app(app: Application):
-    if not loaded_os:
+    if not OS_LOADED:
         pass
-    apps.append(app)
+    APPS.append(app)
 
 
 def remove_app(name_or_screen: str):
-    for app in apps:
+    for app in APPS:
         if app.app_name == name_or_screen or app.app_screen == name_or_screen:
-            apps.remove(app)
+            APPS.remove(app)
 
 
 def load():
-    global loaded_os
-    loaded_os = True
+    global OS_LOADED
+    OS_LOADED = True
     # Loads the default apps
     settings_app = Application("Settings", "ST", "settings", 0x2B2B2B)
     dice_roller_app = Application("Dices", "DC", "dices", 0xE4080A)
     add_app(settings_app)
     add_app(dice_roller_app)
-    osui.refresh_lvgl_app_objects(apps)
+    osui.refresh_lvgl_app_objects(APPS)
+
+    asyncio.run(run_async_jobs())
+
+
+async def run_async_jobs():
+    tasks = []
+    for job in ASYNC_JOBS:
+        tasks.append(asyncio.create_task(job.execute()))
+    if len(tasks) > 0:
+        await asyncio.gather(*tasks)
+
+
+async def stop_async_jobs(identifier: str = None):
+    if identifier is not None:
+        for job in ASYNC_JOBS:
+            job: AsyncJob
+            if job.job_id == identifier:
+                job.cancel()
+    else:
+        for job in ASYNC_JOBS:
+            job.cancel()
+            gc.enable()
+            gc.collect()
+
+
+async def clear_async_jobs():
+    ASYNC_JOBS.clear()
+    gc.enable()
+    gc.collect()
+
+async def schedule_async_job(job: AsyncJob):
+    ASYNC_JOBS.append(job)
+    asyncio.create_task(job.execute())
 
 
 async def app_runner(app: Application):
@@ -49,20 +86,21 @@ async def app_second_runner(app: Application):
 
 
 def open_app(app: Application):
-    global focused_app
-    close_app(focused_app)  # Close the current app if any
-    focused_app = app
+    global FOCUSED_APP
+    close_app(FOCUSED_APP)  # Close the current app if any
+    FOCUSED_APP = app
     # Load the app's initialization
-    if app.app_tick:
-        app.task = asyncio.create_task(app_runner(app))
-    if app.app_second:
-        asyncio.create_task(app_second_runner(app))
+    # TODO New class-based object impl.
+    # if app.app_tick:
+    #     app.task = asyncio.create_task(app_runner(app))
+    # if app.app_second:
+    #     asyncio.create_task(app_second_runner(app))
     # Load App UI
     osui.load_app_ui(app)
 
 
 def close_app(app: Application):
-    global focused_app
+    global FOCUSED_APP
     if app:
         # Remove its update from the async pool
         if app.task:
@@ -72,7 +110,7 @@ def close_app(app: Application):
         # Clear cache (implement cache clearing logic if needed)
         # Switch to the main screen
         osui.switch_to_main_screen()
-        focused_app = None
+        FOCUSED_APP = None
 
 
 async def os_update():
