@@ -5,8 +5,6 @@ class DiceApplication(Application):
     def __init__(self):
         super().__init__("Dices", "DC", "dices", 0xE4080A)
 
-    async def run(self):
+    async def run(self, container: any):
         # UI shit
         pass
-
-    def

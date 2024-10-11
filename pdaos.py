@@ -1,14 +1,11 @@
 import gc
 
+import globals
 import osui
 import asyncio
 
+from globals import APPS, FOCUSED_APP, OS_LOADED, ASYNC_JOBS
 from pdaos_lib import Application, AsyncJob
-
-APPS: list[Application] = []
-FOCUSED_APP: Application | None = None
-OS_LOADED: bool = False
-ASYNC_JOBS: list[AsyncJob] = []
 
 
 def has_focused_app() -> bool:
@@ -28,8 +25,7 @@ def remove_app(name_or_screen: str):
 
 
 def load():
-    global OS_LOADED
-    OS_LOADED = True
+    globals.OS_LOADED = True
     # Loads the default apps
     settings_app = Application("Settings", "ST", "settings", 0x2B2B2B)
     dice_roller_app = Application("Dices", "DC", "dices", 0xE4080A)
@@ -40,15 +36,38 @@ def load():
     asyncio.run(run_async_jobs())
 
 
-async def run_async_jobs():
-    tasks = []
-    for job in ASYNC_JOBS:
-        tasks.append(asyncio.create_task(job.execute()))
-    if len(tasks) > 0:
-        await asyncio.gather(*tasks)
+async def run_async_jobs(identifier: str = None):
+    """
+    Run asynchronous jobs.
+
+    If an identifier is provided, only the job with that identifier will be executed.
+    Otherwise, all jobs in the ASYNC_JOBS list will be executed concurrently.
+
+    :param identifier: Optional identifier of the job to execute.
+    """
+    if identifier is not None:
+        for job in ASYNC_JOBS:
+            job: AsyncJob
+            if job.job_id == identifier:
+                job.execute()
+    else:
+        tasks = []
+        for job in ASYNC_JOBS:
+            job: AsyncJob
+            tasks.append(job.create_task())
+        if len(tasks) > 0:
+            await asyncio.gather(*tasks)
 
 
 async def stop_async_jobs(identifier: str = None):
+    """
+    Stop asynchronous jobs.
+
+    If an identifier is provided, only the job with that identifier will be stopped.
+    Otherwise, all jobs in the ASYNC_JOBS list will be stopped.
+
+    :param identifier: Optional identifier of the job to stop.
+    """
     if identifier is not None:
         for job in ASYNC_JOBS:
             job: AsyncJob
@@ -66,9 +85,10 @@ async def clear_async_jobs():
     gc.enable()
     gc.collect()
 
-async def schedule_async_job(job: AsyncJob):
+async def schedule_async_job(job: AsyncJob, execute_now: bool = False):
     ASYNC_JOBS.append(job)
-    asyncio.create_task(job.execute())
+    if execute_now:
+        job.execute()
 
 
 async def app_runner(app: Application):
@@ -86,9 +106,8 @@ async def app_second_runner(app: Application):
 
 
 def open_app(app: Application):
-    global FOCUSED_APP
-    close_app(FOCUSED_APP)  # Close the current app if any
-    FOCUSED_APP = app
+    close_app(globals.FOCUSED_APP)  # Close the current app if any
+    globals.FOCUSED_APP = app
     # Load the app's initialization
     # TODO New class-based object impl.
     # if app.app_tick:
@@ -100,7 +119,6 @@ def open_app(app: Application):
 
 
 def close_app(app: Application):
-    global FOCUSED_APP
     if app:
         # Remove its update from the async pool
         if app.task:
@@ -110,14 +128,17 @@ def close_app(app: Application):
         # Clear cache (implement cache clearing logic if needed)
         # Switch to the main screen
         osui.switch_to_main_screen()
-        FOCUSED_APP = None
+        globals.FOCUSED_APP = None
 
 
 async def os_update():
+    """
+    OS-Level Async Updates.
+    """
     while True:
         # Perform any OS-level updates here
         # For example, update the time display, check battery status, etc.
-        await osui.update()
+        await osui.update() # UI Update Thread
 
 
 async def gc_coroutine(interval: int):

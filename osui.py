@@ -507,6 +507,9 @@ class BeijingTime:
             await asyncio.sleep(1)
 
 async def data_to_lvgl_every_second():
+    """
+    This function updates the data to accord the changes to the Main Screen UI asynchronously every second.
+    """
     while True:
         # ui_Time.set_text(get_local_current_time())
         if con.is_wifi_connected():
@@ -532,7 +535,10 @@ def refresh_lvgl_app_objects(apps: list[Application]):
         lvgl_app_objects.append(LVGLToObjectBindings(ui_App, app.get_name()))
 
 
-async def update(): # The main function updates the screen.
+async def update():
+    """
+    This is the OS-Level UI Update Thread.
+    """
     # time = BeijingTime()
     task1 = asyncio.create_task(data_to_lvgl_every_second())
     await asyncio.gather(task1)

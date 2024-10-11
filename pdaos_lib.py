@@ -50,18 +50,53 @@ class DataManager(Generic[T]):
 
 
 class AsyncJob:
-    def __init__(self, job_id: str, second_interval: int, job: callable):
+    def __init__(self, job_id: str, job: callable):
         self.job_id = job_id
-        self.second_interval = second_interval
         self.job = job
+        self.task: asyncio.Task = None
 
-    async def execute(self):
-        while self.job:
-            await self.job()
-            await asyncio.sleep(self.second_interval)
+    def is_running(self) -> bool:
+        """
+        Checks if the task is currently running.
+        :return: True if the task is running, otherwise False.
+        """
+        return self.task is not None
 
-    def cancel(self):
-        self.job = None
+    def execute(self):
+        """
+        Executes the given coroutine job asynchronously.
+        """
+        if self.is_running():
+            print("Task is already running.")
+            pass
+
+        async def thread_task():
+            await self.create_task()
+
+        try:
+            asyncio.run(thread_task())
+        except Exception as e:
+            print("Task is cancelled or has encountered an error: ", e)
+
+    def create_task(self):
+        """
+        Creates a new task for the job.
+        :return: The Task object.
+        """
+        if self.is_running():
+            print("Warning: There is a duplicated task. There will be potential conflicts between two tasks.")
+
+        self.task = asyncio.create_task(self.job())
+        return self.task
+
+    def cancel(self, msg: str | None = None):
+        """
+        Cancels the running task.
+        :param msg: The message for cancelling the task.
+        """
+        self.task.cancel(msg)
+        del self.task
+        self.task = None
 
 
 class Application:
@@ -84,7 +119,7 @@ class Application:
         return self.app_color
 
     @abstractmethod
-    async def run(self):
+    async def run(self, container: any):
         pass
 
 
