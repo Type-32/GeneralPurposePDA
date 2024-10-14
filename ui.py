@@ -710,13 +710,13 @@ ui_DiceRollResult.set_height(lv.SIZE_CONTENT)   # 1
 ui_DiceRollResult.set_align( lv.ALIGN.CENTER)
 
 ui_DiceParser = lv.obj(ui_DiceAppScreen)
-ui_DiceParser.set_height(120)
+ui_DiceParser.set_height(400)
 ui_DiceParser.set_width(lv.pct(90))
 ui_DiceParser.set_x(0)
-ui_DiceParser.set_y(-40)
-ui_DiceParser.set_align( lv.ALIGN.BOTTOM_MID)
+ui_DiceParser.set_y(300)
+ui_DiceParser.set_align( lv.ALIGN.TOP_MID)
 ui_DiceParser.set_flex_flow(lv.FLEX_FLOW.COLUMN)
-ui_DiceParser.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+ui_DiceParser.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
 SetFlag(ui_DiceParser, lv.obj.FLAG.SCROLLABLE, False)
 
 ui_DiceParserTitle = lv.label(ui_DiceParser)
@@ -758,11 +758,20 @@ ui_DiceCalcLabel.set_height(lv.SIZE_CONTENT)   # 1
 ui_DiceCalcLabel.set_align( lv.ALIGN.CENTER)
 
 ui_DiceCalculateButton.add_event_cb(DiceCalculateButton_eventhandler, lv.EVENT.ALL, None)
+ui_DiceParserInputKB = lv.keyboard(ui_DiceParser)
+ui_DiceParserInputKB.set_width(lv.pct(100))
+ui_DiceParserInputKB.set_flex_grow(1)
+ui_DiceParserInputKB.set_x(-1)
+ui_DiceParserInputKB.set_y(111)
+ui_DiceParserInputKB.set_align( lv.ALIGN.BOTTOM_MID)
+
+#if 'ui_DiceParserInput' in globals():
 ui_OverInterface = lv.obj(ui_MainContainer)
 ui_OverInterface.remove_style_all()
 ui_OverInterface.set_width(lv.pct(100))
 ui_OverInterface.set_height(lv.pct(100))
 ui_OverInterface.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_OverInterface, lv.obj.FLAG.HIDDEN, True)
 SetFlag(ui_OverInterface, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_OverInterface, lv.obj.FLAG.SCROLLABLE, False)
 
@@ -865,6 +874,7 @@ ui_Notification = ui_Notification_create(ui_NotificationsContainer)
 ui_Notification.set_x(0)
 ui_Notification.set_y(0)
 
+ui_DiceParserInputKB.set_textarea(ui_DiceParserInput)
 ui_MainKeyboard.set_textarea(ui_KeyboardContent)
 
 lv.screen_load(ui_Screen1)

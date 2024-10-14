@@ -1,8 +1,5 @@
 import asyncio
-from abc import abstractmethod
-from asyncio import Future
 
-import micropython
 import ujson
 
 LIB_VER: str = "0.0.0"
@@ -15,38 +12,38 @@ def get_library_version() -> str:
     return LIB_VER
 
 
-from typing import TypeVar, Generic, Type
+# from typing import TypeVar, Generic, Type
 
-T = TypeVar('T', bound='IEncodable')
+# T = TypeVar('T', bound='IEncodable')
 
-class DataManager(Generic[T]):
-    def __init__(self, cls: Type[T], file_name: str = "data.json"):
-        self.cls = cls
-        self.file_name = file_name
-        self.content: T = self.load()
-
-    def load(self) -> T:
-        try:
-            with open(self.file_name, 'r') as f:
-                data = f.read()
-                obj = self.cls()
-                obj.decode(data)
-                return obj
-        except Exception as e:
-            print(f'Exception occurred while loading the file: {e}')
-            return self.cls()
-
-    def save(self):
-        if self.content:
-            with open(self.file_name, 'w') as f:
-                f.write(self.content.encode())
-
-    def get(self) -> T:
-        return self.content
-
-    def set(self, content: T):
-        self.content = content
-        self.save()
+# class DataManager(Generic[T]):
+#     def __init__(self, cls: Type[T], file_name: str = "data.json"):
+#         self.cls = cls
+#         self.file_name = file_name
+#         self.content: T = self.load()
+#
+#     def load(self) -> T:
+#         try:
+#             with open(self.file_name, 'r') as f:
+#                 data = f.read()
+#                 obj = self.cls()
+#                 obj.decode(data)
+#                 return obj
+#         except Exception as e:
+#             print(f'Exception occurred while loading the file: {e}')
+#             return self.cls()
+#
+#     def save(self):
+#         if self.content:
+#             with open(self.file_name, 'w') as f:
+#                 f.write(self.content.encode())
+#
+#     def get(self) -> T:
+#         return self.content
+#
+#     def set(self, content: T):
+#         self.content = content
+#         self.save()
 
 
 class AsyncJob:
@@ -119,10 +116,9 @@ class Application:
         return self.app_color
 
     def get_process_id(self):
-        return f"app_{self.__hash__()}"
+        return f"app_{id(self)}"
 
-    @abstractmethod
-    async def run(self, container: any):
+    def run(self, container: any):
         pass
 
 
@@ -155,18 +151,18 @@ class Config(IEncodable):
         self.config_categories = config_categories
 
 
-class OSConfigManager(DataManager[Config]):
-    def __init__(self, config_name: str = "sys_conf.json"):
-        super().__init__(Config, config_name)
-
-    def change(self, value: any, save: bool = False, *keys):
-        if self.content is not None:
-            current = self.content
-            for arg in keys[:-1]:
-                current = getattr(current, arg)
-            setattr(current, keys[-1], value)
-            if save:
-                self.save()
+# class OSConfigManager(DataManager[Config]):
+#     def __init__(self, config_name: str = "sys_conf.json"):
+#         super().__init__(Config, config_name)
+#
+#     def change(self, value: any, save: bool = False, *keys):
+#         if self.content is not None:
+#             current = self.content
+#             for arg in keys[:-1]:
+#                 current = getattr(current, arg)
+#             setattr(current, keys[-1], value)
+#             if save:
+#                 self.save()
 
 
 class LVGLToObjectBindings:
@@ -198,4 +194,4 @@ class Notification:
 
 
 def notif_identifier_hash(obj: Notification) -> str:
-    return f"notification-{obj.__hash__()}"
+    return f"notification-{id(obj)}"

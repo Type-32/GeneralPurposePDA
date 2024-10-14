@@ -1,5 +1,8 @@
+import asyncio
+
+import globals
 import pdaos
-from pdaos_lib import Application
+from pdaos_lib import Application, AsyncJob
 from osui import SetFlag, add_lvgl_object_binding
 import lvgl as lv
 import random
@@ -36,7 +39,7 @@ class DiceApplication(Application):
             if print_output: print(random.randint(1, int(segments[1])))
         return rolls
 
-    async def run(self, container: any):
+    def run(self, container: any):
 
         def d2Type_eventhandler(event_struct):
             target = event_struct.get_target()
@@ -94,18 +97,29 @@ class DiceApplication(Application):
                 set_result(quick_roll(100))
             return
 
-        async def DiceParserInput_eventhandler(event_struct):
+        def DiceParserInput_eventhandler(event_struct):
             target = event_struct.get_target()
             event = event_struct.code
-            if event == lv.EVENT.CLICKED and True:
-                ui_DiceParserInput.set_text(await pdaos.use_keyboard(""))
+            if event == lv.EVENT.CLICKED:
+                print("Editing dice parser text")
+                # help(event_struct.get_target_obj())
+                pdaos.invoke_keyboard(event_struct.get_target_obj().get_text())
+                globals.set_temp_variable("ui_DiceParserInput", event_struct.get_target_obj())
+                globals.set_temp_variable("diceParserFocused", True)
+            elif globals.get_temp_variable("diceParserFocused") and not pdaos.is_keyboard_focused():
+                globals.set_temp_variable("diceParserFocused", False)
+                globals.remove_temp_variable("diceParserFocused")
+                print("Woah")
+                # pdaos.revoke_keybaord()
+                globals.get_temp_variable("ui_DiceParserInput").set_text(pdaos.get_keyboard_text())
+                globals.remove_temp_variable("ui_DiceParserInput")
             return
 
         def DiceCalculateButton_eventhandler(event_struct):
             target = event_struct.get_target()
             event = event_struct.code
             if event == lv.EVENT.CLICKED and True:
-                set_result(DiceApplication.parseDiceRoll(ui_DiceParserInput.get_text(), False)[0])
+                set_result(DiceApplication.parseDiceRoll(event_struct.get_target_obj().get_text(), False)[0])
             return
 
         def set_result(number: int):
@@ -113,6 +127,13 @@ class DiceApplication(Application):
 
         def quick_roll(dice_number: int) -> int:
             return DiceApplication.parseDiceRoll(f"d{dice_number}")[0]
+
+        # async def sync_text_to_area(self):
+        #     while True:
+        #         if self.diceParserFocused and not pdaos.is_keyboard_focused():
+        #             print(self.ui_DiceParserInput.set_text(pdaos.get_keyboard_text()))
+        #             self.diceParserFocused = False
+        #         await asyncio.sleep(0.1)
 
         ui_DiceAppScreen = lv.obj(container)
         ui_DiceAppScreen.remove_style_all()

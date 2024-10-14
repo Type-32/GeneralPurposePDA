@@ -4,6 +4,7 @@ import utime
 import connectivity as con
 import asyncio
 
+import globals
 import pdaos_lib
 from globals import QUEUED_NOTIFICATIONS
 from pdaos_lib import Application, LVGLToObjectBindings, Notification
@@ -31,6 +32,9 @@ def SetFlag(obj, flag, value: bool):
         obj.remove_flag(flag)
     return
 
+
+def SetVisible(component: any, state: bool):
+    SetFlag(component, lv.obj.FLAG.HIDDEN, not state)
 
 # COMPONENTS
 
@@ -105,16 +109,18 @@ def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Co
 
 
 # COMPONENT App
-def comp_App_AppButton_eventhandler(event_struct):
-    target = event_struct.get_target()
-    comp_App = ui_comp_get_root_from_child(target, "App")
-    event = event_struct.code
-    if event == lv.EVENT.CLICKED and True:
-        (event_struct)
-    return
-
-
 def ui_App_create(comp_parent, app_title: str = "Untitled App", app_icon: str = "??", bg_color_hex: int = 0x5385ED):
+    def comp_App_AppButton_eventhandler(event_struct):
+        target = event_struct.get_target()
+        comp_App = ui_comp_get_root_from_child(target, "App")
+        event = event_struct.code
+        if event == lv.EVENT.CLICKED and True:
+            from pdaos import open_app
+            import globals
+            # globals.get_app_by_name(comp_App["AppTitle"].get_text())
+            open_app(globals.get_app_by_name(app_title))
+        return
+
     cui_App = lv.obj(comp_parent)
     cui_App.remove_style_all()
     cui_App.set_width(100)
@@ -217,7 +223,8 @@ def HomeButton_eventhandler(event_struct):
     target = event_struct.get_target()
     event = event_struct.code
     if event == lv.EVENT.CLICKED and True:
-        (event_struct)
+        from pdaos import to_home
+        to_home()
     return
 
 
@@ -245,26 +252,33 @@ KB_FOCUSED: bool = False
 
 def set_keyboard_state(enabled: bool):
     global KB_FOCUSED
-    SetFlag(ui_KeyboardContainer, lv.obj.HIDDEN, not enabled)
+    if len(globals.QUEUED_MODALS) <= 0:
+        SetVisible(ui_OverInterface, enabled)
+    SetVisible(ui_KeyboardContainer, enabled)
+
     KB_FOCUSED = enabled
 
 
 def MainKeyboard_eventhandler(event_struct):
-   target = event_struct.get_target()
-   event = event_struct.code
-   if event == lv.EVENT.READY and True:
-      set_keyboard_state(False)
-   return
+    target = event_struct.get_target()
+    event = event_struct.code
+    if event == lv.EVENT.READY:
+        print("Ready")
+        # from pdaos import KB_FINISH_CALLBACK
+        # for c in KB_FINISH_CALLBACK:
+        #     c: callable
+        #     c()
+        # KB_FINISH_CALLBACK.clear()
+        set_keyboard_state(False)
+    return
 
 
 def set_keyboard_content(content: str):
-    global keyboard
-    keyboard = content
+    ui_KeyboardContent.set_text(content)
 
 
 def get_keyboard_content() -> str:
-    global keyboard
-    return keyboard
+    return ui_KeyboardContent.get_text()
 
 
 def get_local_current_time():
@@ -424,6 +438,7 @@ ui_KeyboardContainer.set_height(lv.pct(100))
 ui_KeyboardContainer.set_align(lv.ALIGN.CENTER)
 ui_KeyboardContainer.set_flex_flow(lv.FLEX_FLOW.COLUMN)
 ui_KeyboardContainer.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
+SetFlag(ui_KeyboardContainer, lv.obj.FLAG.HIDDEN, False)
 SetFlag(ui_KeyboardContainer, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_KeyboardContainer, lv.obj.FLAG.SCROLLABLE, False)
 ui_KeyboardContainer.set_style_bg_color(lv.color_hex(0x000000), lv.PART.MAIN | lv.STATE.DEFAULT)
@@ -444,7 +459,6 @@ ui_KeyboardContent.set_placeholder_text("Placeholder...")
 ui_KeyboardContent.set_x(-321)
 ui_KeyboardContent.set_y(-183)
 ui_KeyboardContent.set_align(lv.ALIGN.CENTER)
-set_keyboard_content(ui_KeyboardContent.get_label())
 
 ui_MainKeyboard = lv.keyboard(ui_KeyboardContainer)
 ui_MainKeyboard.add_event_cb(MainKeyboard_eventhandler, lv.EVENT.ALL, None)
@@ -554,7 +568,7 @@ async def queue_push_notif_every_second():
     """
     while True:
         if len(QUEUED_NOTIFICATIONS) > 0:
-            SetFlag(ui_NotificationsContainer, lv.obj.HIDDEN, False)
+            SetFlag(ui_NotificationsContainer, lv.obj.FLAG.HIDDEN, False)
             create_notification(QUEUED_NOTIFICATIONS[0])
             temp_sec: float = QUEUED_NOTIFICATIONS[0].duration
             temp_hash: str = pdaos_lib.notif_identifier_hash(QUEUED_NOTIFICATIONS[0])
@@ -562,7 +576,7 @@ async def queue_push_notif_every_second():
                 temp_sec -= 0.1
                 await asyncio.sleep(0.1) # Detect whether the callback was invoked before the duration was up
         else:
-            SetFlag(ui_NotificationsContainer, lv.obj.HIDDEN, True)
+            SetFlag(ui_NotificationsContainer, lv.obj.FLAG.HIDDEN, True)
             await asyncio.sleep(1)
 
 
@@ -614,10 +628,17 @@ def remove_lvgl_object_binding(identifier: str, delete_lvgl_object: bool = True,
 def get_app_interface_container():
     return ui_AppInterface
 
+def get_application_screen_container():
+    return ui_ApplicationScreen
 
 def update_main_screen():
-    import globals as g
-    SetFlag(ui_AppInterface, lv.obj.FLAG.HIDDEN, g.FOCUSED_APP is None)
+    from globals import no_focused_app
+    # print(f"Update Main Screen: {no_focused_app()}")
+    set_main_screen(no_focused_app())
+
+
+def set_main_screen(state: bool):
+    SetVisible(ui_AppInterface, state)
 
 
 def create_notification(notif: Notification):

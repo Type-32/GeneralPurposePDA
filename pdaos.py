@@ -4,13 +4,10 @@ import globals
 import osui
 import asyncio
 
-from globals import APPS, FOCUSED_APP, OS_LOADED, ASYNC_JOBS, QUEUED_MODALS, QUEUED_NOTIFICATIONS
+from globals import APPS, FOCUSED_APP, OS_LOADED, ASYNC_JOBS, QUEUED_MODALS, QUEUED_NOTIFICATIONS, get_focused_app, set_focused_app
 from pdaos_lib import Application, AsyncJob, LVGLToObjectBindings, Modal, Notification
 
-
-def has_focused_app() -> bool:
-    return FOCUSED_APP is not None
-
+KB_FINISH_CALLBACK: list[callable] = []
 
 def add_app(app: Application):
     if not OS_LOADED:
@@ -92,22 +89,43 @@ async def schedule_async_job(job: AsyncJob, execute_now: bool = False):
         job.execute()
 
 
-def open_app(app: Application):
-    close_app(globals.FOCUSED_APP)  # Close the current app if any
-    globals.FOCUSED_APP = app
+def schedule_onetime_kb_callback(callback: callable):
+    KB_FINISH_CALLBACK.append(callback)
 
+
+def open_app(app: Application):
+    from globals import get_focused_app, set_focused_app, no_focused_app
+    print(f"Called open_app. Debug: {app.get_process_id()}, {app.get_name()}, {no_focused_app()}")
+    close_app(get_focused_app())  # Close the current app if any
+    set_focused_app(app)
+    # print(f"Set Focused App: {get_focused_app()}")
     osui.update_main_screen()
-    asyncio.run(globals.FOCUSED_APP.run(osui.get_app_interface_container()))
+    # print(f"Set Focused App: {get_focused_app()}")
+    get_focused_app().run(osui.get_application_screen_container())
+    # print(f"Set Focused App: {get_focused_app()}")
+
+
+def is_keyboard_focused() -> bool:
+    return osui.KB_FOCUSED
+
+
+def revoke_keybaord():
+    osui.set_keyboard_state(False)
 
 
 def close_app(app: Application):
-    globals.FOCUSED_APP = None
+    if app is None:
+        return
+
+    from globals import set_focused_app, no_focused_app
+    set_focused_app(None)
 
     if app:
         stop_async_jobs(app.get_process_id())
         osui.remove_lvgl_object_binding(app.get_process_id(), delete_lvgl_object=True, do_gc=True)
 
     osui.update_main_screen()
+    print(f"Called close_app(). Debug: {app.get_process_id()}, {app.get_name()}, {no_focused_app()}")
 
 
 async def os_update():
@@ -154,8 +172,9 @@ def push_notif(notif: Notification):
 
 
 def to_home():
-    if globals.FOCUSED_APP is not None:
-        close_app(globals.FOCUSED_APP)
+    from globals import no_focused_app
+    if not no_focused_app():
+        close_app(globals.get_focused_app())
     osui.update_main_screen()
 
 
@@ -167,11 +186,20 @@ async def use_keyboard(init_text: str = "") -> str:
     return osui.get_keyboard_content()
 
 
+def invoke_keyboard(init_text: str = "", callback: callable = None):
+    osui.set_keyboard_content(init_text)
+    osui.set_keyboard_state(True)
+
+
+def get_keyboard_text() -> str:
+    return osui.get_keyboard_content()
+
+
 async def main():
     await osui.update() # Start OS-UI Async Updates
-    await os_update()
+    asyncio.run(os_update())
     asyncio.run(gc_coroutine(60)) # Run a 60-second GC. Must use asyncio.run() to run in the background.
 
-    while True:
-        # Handling above-OS-Level stuff here, e.g. Notifications, App launch requests, etc.
-        await asyncio.sleep(0.1)
+    # while True:
+    #     # Handling above-OS-Level stuff here, e.g. Notifications, App launch requests, etc.
+    #     await asyncio.sleep(0.1)
