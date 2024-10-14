@@ -4,8 +4,8 @@ import globals
 import osui
 import asyncio
 
-from globals import APPS, FOCUSED_APP, OS_LOADED, ASYNC_JOBS
-from pdaos_lib import Application, AsyncJob
+from globals import APPS, FOCUSED_APP, OS_LOADED, ASYNC_JOBS, QUEUED_MODALS, QUEUED_NOTIFICATIONS
+from pdaos_lib import Application, AsyncJob, LVGLToObjectBindings, Modal, Notification
 
 
 def has_focused_app() -> bool:
@@ -25,10 +25,11 @@ def remove_app(name_or_screen: str):
 
 
 def load():
+    import applications as apcs
     globals.OS_LOADED = True
     # Loads the default apps
-    settings_app = Application("Settings", "ST", "settings", 0x2B2B2B)
-    dice_roller_app = Application("Dices", "DC", "dices", 0xE4080A)
+    settings_app = apcs.SettingsApplication()
+    dice_roller_app = apcs.DiceApplication()
     add_app(settings_app)
     add_app(dice_roller_app)
     osui.refresh_lvgl_app_objects(APPS)
@@ -91,54 +92,33 @@ async def schedule_async_job(job: AsyncJob, execute_now: bool = False):
         job.execute()
 
 
-async def app_runner(app: Application):
-    while True:
-        if app.app_tick:
-            await app.app_tick()
-        await asyncio.sleep(1)  # Adjust the interval as needed
-
-
-async def app_second_runner(app: Application):
-    while True:
-        if app.app_second:
-            await app.app_second()
-        await asyncio.sleep(1)
-
-
 def open_app(app: Application):
     close_app(globals.FOCUSED_APP)  # Close the current app if any
     globals.FOCUSED_APP = app
-    # Load the app's initialization
-    # TODO New class-based object impl.
-    # if app.app_tick:
-    #     app.task = asyncio.create_task(app_runner(app))
-    # if app.app_second:
-    #     asyncio.create_task(app_second_runner(app))
-    # Load App UI
-    osui.load_app_ui(app)
+
+    osui.update_main_screen()
+    asyncio.run(globals.FOCUSED_APP.run(osui.get_app_interface_container()))
 
 
 def close_app(app: Application):
+    globals.FOCUSED_APP = None
+
     if app:
-        # Remove its update from the async pool
-        if app.task:
-            app.task.cancel()
-        # Remove its UI from the screen
-        osui.unload_app_ui(app)
-        # Clear cache (implement cache clearing logic if needed)
-        # Switch to the main screen
-        osui.switch_to_main_screen()
-        globals.FOCUSED_APP = None
+        stop_async_jobs(app.get_process_id())
+        osui.remove_lvgl_object_binding(app.get_process_id(), delete_lvgl_object=True, do_gc=True)
+
+    osui.update_main_screen()
 
 
 async def os_update():
     """
     OS-Level Async Updates.
     """
-    while True:
-        # Perform any OS-level updates here
-        # For example, update the time display, check battery status, etc.
-        await osui.update() # UI Update Thread
+    pass
+    # while True:
+    #     # Perform any OS-level updates here
+    #     # For example, update the time display, check battery status, etc.
+    #     await osui.update() # UI Update Thread
 
 
 async def gc_coroutine(interval: int):
@@ -153,9 +133,44 @@ async def gc_coroutine(interval: int):
         await asyncio.sleep(interval)
 
 
+def add_lvgl_object_binding(obj: any, identifier: str):
+    osui.add_lvgl_object_binding(obj, identifier)
+
+
+def get_lvgl_object_binding(identifier: str) -> LVGLToObjectBindings | None:
+    return osui.get_lvgl_object_binding(identifier)
+
+
+def remove_lvgl_object_binding(identifier: str, delete_lvgl_object: bool = True, do_gc: bool = False):
+    osui.remove_lvgl_object_binding(identifier, delete_lvgl_object, do_gc)
+
+
+def push_modal(modal: Modal):
+    QUEUED_MODALS.append(modal)
+
+
+def push_notif(notif: Notification):
+    QUEUED_NOTIFICATIONS.append(notif)
+
+
+def to_home():
+    if globals.FOCUSED_APP is not None:
+        close_app(globals.FOCUSED_APP)
+    osui.update_main_screen()
+
+
+async def use_keyboard(init_text: str = "") -> str:
+    osui.set_keyboard_content(init_text)
+    osui.set_keyboard_state(True)
+    while osui.KB_FOCUSED:
+        await asyncio.sleep(0.1)
+    return osui.get_keyboard_content()
+
+
 async def main():
-    asyncio.run(os_update())
-    asyncio.run(gc_coroutine(60)) # Run a 60-minute GC.
+    await osui.update() # Start OS-UI Async Updates
+    await os_update()
+    asyncio.run(gc_coroutine(60)) # Run a 60-second GC. Must use asyncio.run() to run in the background.
 
     while True:
         # Handling above-OS-Level stuff here, e.g. Notifications, App launch requests, etc.

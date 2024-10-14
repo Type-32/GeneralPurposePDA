@@ -5,14 +5,14 @@ from asyncio import Future
 import micropython
 import ujson
 
-library_version: str = "0.0.1"
-os_version: str = "0.0.1"
+LIB_VER: str = "0.0.0"
+OS_VER: str = "0.0.0"
 
 def get_os_version() -> str:
-    return os_version
+    return OS_VER
 
 def get_library_version() -> str:
-    return library_version
+    return LIB_VER
 
 
 from typing import TypeVar, Generic, Type
@@ -118,6 +118,9 @@ class Application:
     def get_color(self):
         return self.app_color
 
+    def get_process_id(self):
+        return f"app_{self.__hash__()}"
+
     @abstractmethod
     async def run(self, container: any):
         pass
@@ -165,3 +168,34 @@ class OSConfigManager(DataManager[Config]):
             if save:
                 self.save()
 
+
+class LVGLToObjectBindings:
+    def __init__(self, obj: any, identifier: str):
+        self.obj = obj
+        self.identifier = identifier
+
+    def get(self) -> any:
+        return self.obj
+
+
+class Modal:
+    def __init__(self, title: str, message: str, buttons: list[str], callbacks=None):
+        if callbacks is None:
+            self.callbacks: list[callable] = []
+        else:
+            self.callbacks = callbacks
+        self.title = title
+        self.message = message
+        self.buttons = buttons
+
+
+class Notification:
+    def __init__(self, title: str, message: str, duration: int = 3, click_callback: callable = None):
+        self.title = title
+        self.message = message
+        self.click_callback = click_callback
+        self.duration = duration
+
+
+def notif_identifier_hash(obj: Notification) -> str:
+    return f"notification-{obj.__hash__()}"

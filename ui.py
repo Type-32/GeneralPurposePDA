@@ -5,6 +5,7 @@
 
 import lvgl as lv
 import ui_images
+import ui_events
 
 dispp = lv.display_get_default()
 theme = lv.theme_default_init(dispp, lv.palette_main(lv.PALETTE.BLUE), lv.palette_main(lv.PALETTE.RED), False, lv.font_default())
@@ -257,7 +258,7 @@ def ui_Notification_create(comp_parent):
     return cui_Notification
 
  # COMPONENT OptionsModal
-def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Content", opt1_label: str = "Option 1", opt2_label: str = "Option 2", opt1: callable = None, opt2: callable = None):
+def ui_OptionsModal_create(comp_parent):
     cui_OptionsModal = lv.obj(comp_parent)
     cui_OptionsModal.set_width(lv.pct(60))
     cui_OptionsModal.set_height(lv.SIZE_CONTENT)   # 50
@@ -266,7 +267,7 @@ def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Co
     cui_OptionsModal.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
     SetFlag(cui_OptionsModal, lv.obj.FLAG.SCROLLABLE, False)
     cui_ModalTitle = lv.label(cui_OptionsModal)
-    cui_ModalTitle.set_text(title)
+    cui_ModalTitle.set_text("ModalTitle")
     cui_ModalTitle.set_width(lv.pct(100))
     cui_ModalTitle.set_height(lv.SIZE_CONTENT)   # 1
     cui_ModalTitle.set_style_text_color(lv.color_hex(0x4C4C4C), lv.PART.MAIN | lv.STATE.DEFAULT )
@@ -275,7 +276,7 @@ def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Co
     cui_ModalTitle.set_style_text_line_space( 0, lv.PART.MAIN | lv.STATE.DEFAULT )
     cui_ModalTitle.set_style_text_font( lv.font_montserrat_18, lv.PART.MAIN | lv.STATE.DEFAULT )
     cui_ModalContent = lv.label(cui_OptionsModal)
-    cui_ModalContent.set_text(content)
+    cui_ModalContent.set_text("text")
     cui_ModalContent.set_width(lv.pct(100))
     cui_ModalContent.set_height(lv.SIZE_CONTENT)   # 1
     cui_ModalContent.set_align( lv.ALIGN.CENTER)
@@ -295,7 +296,7 @@ def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Co
     SetFlag(cui_Opt1, lv.obj.FLAG.SCROLLABLE, False)
     SetFlag(cui_Opt1, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
     cui_Opt1Text = lv.label(cui_Opt1)
-    cui_Opt1Text.set_text(opt1_label)
+    cui_Opt1Text.set_text("Option1")
     cui_Opt1Text.set_width(lv.SIZE_CONTENT)	# 1
     cui_Opt1Text.set_height(lv.SIZE_CONTENT)   # 1
     cui_Opt1Text.set_align( lv.ALIGN.CENTER)
@@ -313,7 +314,7 @@ def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Co
     SetFlag(cui_Opt2, lv.obj.FLAG.SCROLLABLE, False)
     SetFlag(cui_Opt2, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
     cui_Option2Text = lv.label(cui_Opt2)
-    cui_Option2Text.set_text(opt2_label)
+    cui_Option2Text.set_text("Option2")
     cui_Option2Text.set_width(lv.SIZE_CONTENT)	# 1
     cui_Option2Text.set_height(lv.SIZE_CONTENT)   # 1
     cui_Option2Text.set_align( lv.ALIGN.CENTER)
@@ -321,6 +322,76 @@ def ui_OptionsModal_create(comp_parent, title: str = "Modal", content: str = "Co
     return cui_OptionsModal
 
 ui____initial_actions0 = lv.obj()
+
+def d2Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def d4Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def d6Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def d8Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def d10Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def d12Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def d20Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def d100Type_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def DiceParserInput_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
+
+def DiceCalculateButton_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.CLICKED and True:
+      ( event_struct )
+   return
 
 def OptionsModal_Options_Opt1_eventhandler(event_struct):
    target = event_struct.get_target()
@@ -334,6 +405,13 @@ def OptionsModal_Options_Opt2_eventhandler(event_struct):
    event = event_struct.code
    if event == lv.EVENT.CLICKED and True:
       ( event_struct )
+   return
+
+def MainKeyboard_eventhandler(event_struct):
+   target = event_struct.get_target()
+   event = event_struct.code
+   if event == lv.EVENT.READY and True:
+      onKbFinishInput( event_struct )
    return
 
 def HomeButton_eventhandler(event_struct):
@@ -439,6 +517,7 @@ ui_AppInterface.set_height(lv.pct(95))
 ui_AppInterface.set_align( lv.ALIGN.BOTTOM_MID)
 ui_AppInterface.set_flex_flow(lv.FLEX_FLOW.ROW)
 ui_AppInterface.set_flex_align(lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START, lv.FLEX_ALIGN.START)
+SetFlag(ui_AppInterface, lv.obj.FLAG.HIDDEN, True)
 SetFlag(ui_AppInterface, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_AppInterface, lv.obj.FLAG.SCROLLABLE, False)
 ui_AppInterface.set_style_pad_left( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
@@ -459,19 +538,231 @@ ui_ApplicationScreen.set_height(lv.pct(95))
 ui_ApplicationScreen.set_align( lv.ALIGN.BOTTOM_MID)
 SetFlag(ui_ApplicationScreen, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_ApplicationScreen, lv.obj.FLAG.SCROLLABLE, False)
-ui_ApplicationScreen.set_style_pad_left( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
-ui_ApplicationScreen.set_style_pad_right( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
-ui_ApplicationScreen.set_style_pad_top( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
-ui_ApplicationScreen.set_style_pad_bottom( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
-ui_ApplicationScreen.set_style_pad_row( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
-ui_ApplicationScreen.set_style_pad_column( 30, lv.PART.MAIN | lv.STATE.DEFAULT )
 
+ui_DiceAppScreen = lv.obj(ui_ApplicationScreen)
+ui_DiceAppScreen.remove_style_all()
+ui_DiceAppScreen.set_width(lv.pct(100))
+ui_DiceAppScreen.set_height(lv.pct(100))
+ui_DiceAppScreen.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_DiceAppScreen, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_DiceAppScreen, lv.obj.FLAG.SCROLLABLE, False)
+
+ui_QuickDiceRolls = lv.obj(ui_DiceAppScreen)
+ui_QuickDiceRolls.set_height(120)
+ui_QuickDiceRolls.set_width(lv.pct(90))
+ui_QuickDiceRolls.set_x(0)
+ui_QuickDiceRolls.set_y(50)
+ui_QuickDiceRolls.set_align( lv.ALIGN.TOP_MID)
+ui_QuickDiceRolls.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+ui_QuickDiceRolls.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_QuickDiceRolls, lv.obj.FLAG.SCROLLABLE, False)
+
+ui_QuickDiceRollerTitle = lv.label(ui_QuickDiceRolls)
+ui_QuickDiceRollerTitle.set_text("Quick Dice Roller (Click on the buttons to get results)")
+ui_QuickDiceRollerTitle.set_width(lv.SIZE_CONTENT)	# 1
+ui_QuickDiceRollerTitle.set_height(lv.SIZE_CONTENT)   # 1
+ui_QuickDiceRollerTitle.set_align( lv.ALIGN.CENTER)
+
+ui_DiceRollsButtons = lv.obj(ui_QuickDiceRolls)
+ui_DiceRollsButtons.remove_style_all()
+ui_DiceRollsButtons.set_height(50)
+ui_DiceRollsButtons.set_width(lv.pct(100))
+ui_DiceRollsButtons.set_align( lv.ALIGN.CENTER)
+ui_DiceRollsButtons.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_DiceRollsButtons.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_DiceRollsButtons, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_DiceRollsButtons, lv.obj.FLAG.SCROLLABLE, False)
+ui_DiceRollsButtons.set_style_pad_row( 0, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_DiceRollsButtons.set_style_pad_column( 10, lv.PART.MAIN | lv.STATE.DEFAULT )
+
+ui_d2Type = lv.button(ui_DiceRollsButtons)
+ui_d2Type.set_height(lv.pct(100))
+ui_d2Type.set_flex_grow(1)
+ui_d2Type.set_x(-58)
+ui_d2Type.set_y(-135)
+ui_d2Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d2Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d2Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label1 = lv.label(ui_d2Type)
+ui_Label1.set_text("d2")
+ui_Label1.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label1.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label1.set_align( lv.ALIGN.CENTER)
+
+ui_d2Type.add_event_cb(d2Type_eventhandler, lv.EVENT.ALL, None)
+ui_d4Type = lv.button(ui_DiceRollsButtons)
+ui_d4Type.set_height(lv.pct(100))
+ui_d4Type.set_flex_grow(1)
+ui_d4Type.set_x(-58)
+ui_d4Type.set_y(-135)
+ui_d4Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d4Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d4Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label2 = lv.label(ui_d4Type)
+ui_Label2.set_text("d4")
+ui_Label2.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label2.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label2.set_align( lv.ALIGN.CENTER)
+
+ui_d4Type.add_event_cb(d4Type_eventhandler, lv.EVENT.ALL, None)
+ui_d6Type = lv.button(ui_DiceRollsButtons)
+ui_d6Type.set_height(lv.pct(100))
+ui_d6Type.set_flex_grow(1)
+ui_d6Type.set_x(-58)
+ui_d6Type.set_y(-135)
+ui_d6Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d6Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d6Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label3 = lv.label(ui_d6Type)
+ui_Label3.set_text("d6")
+ui_Label3.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label3.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label3.set_align( lv.ALIGN.CENTER)
+
+ui_d6Type.add_event_cb(d6Type_eventhandler, lv.EVENT.ALL, None)
+ui_d8Type = lv.button(ui_DiceRollsButtons)
+ui_d8Type.set_height(lv.pct(100))
+ui_d8Type.set_flex_grow(1)
+ui_d8Type.set_x(-58)
+ui_d8Type.set_y(-135)
+ui_d8Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d8Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d8Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label4 = lv.label(ui_d8Type)
+ui_Label4.set_text("d8")
+ui_Label4.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label4.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label4.set_align( lv.ALIGN.CENTER)
+
+ui_d8Type.add_event_cb(d8Type_eventhandler, lv.EVENT.ALL, None)
+ui_d10Type = lv.button(ui_DiceRollsButtons)
+ui_d10Type.set_height(lv.pct(100))
+ui_d10Type.set_flex_grow(1)
+ui_d10Type.set_x(-58)
+ui_d10Type.set_y(-135)
+ui_d10Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d10Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d10Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label5 = lv.label(ui_d10Type)
+ui_Label5.set_text("d10")
+ui_Label5.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label5.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label5.set_align( lv.ALIGN.CENTER)
+
+ui_d10Type.add_event_cb(d10Type_eventhandler, lv.EVENT.ALL, None)
+ui_d12Type = lv.button(ui_DiceRollsButtons)
+ui_d12Type.set_height(lv.pct(100))
+ui_d12Type.set_flex_grow(1)
+ui_d12Type.set_x(-58)
+ui_d12Type.set_y(-135)
+ui_d12Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d12Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d12Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label6 = lv.label(ui_d12Type)
+ui_Label6.set_text("d12")
+ui_Label6.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label6.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label6.set_align( lv.ALIGN.CENTER)
+
+ui_d12Type.add_event_cb(d12Type_eventhandler, lv.EVENT.ALL, None)
+ui_d20Type = lv.button(ui_DiceRollsButtons)
+ui_d20Type.set_height(lv.pct(100))
+ui_d20Type.set_flex_grow(1)
+ui_d20Type.set_x(-58)
+ui_d20Type.set_y(-135)
+ui_d20Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d20Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d20Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label7 = lv.label(ui_d20Type)
+ui_Label7.set_text("d20")
+ui_Label7.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label7.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label7.set_align( lv.ALIGN.CENTER)
+
+ui_d20Type.add_event_cb(d20Type_eventhandler, lv.EVENT.ALL, None)
+ui_d100Type = lv.button(ui_DiceRollsButtons)
+ui_d100Type.set_height(lv.pct(100))
+ui_d100Type.set_flex_grow(1)
+ui_d100Type.set_x(-58)
+ui_d100Type.set_y(-135)
+ui_d100Type.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_d100Type, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_d100Type, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_Label8 = lv.label(ui_d100Type)
+ui_Label8.set_text("d100")
+ui_Label8.set_width(lv.SIZE_CONTENT)	# 1
+ui_Label8.set_height(lv.SIZE_CONTENT)   # 1
+ui_Label8.set_align( lv.ALIGN.CENTER)
+
+ui_d100Type.add_event_cb(d100Type_eventhandler, lv.EVENT.ALL, None)
+ui_DiceRollResult = lv.label(ui_DiceAppScreen)
+ui_DiceRollResult.set_text("Result: <Unset>")
+ui_DiceRollResult.set_width(lv.SIZE_CONTENT)	# 1
+ui_DiceRollResult.set_height(lv.SIZE_CONTENT)   # 1
+ui_DiceRollResult.set_align( lv.ALIGN.CENTER)
+
+ui_DiceParser = lv.obj(ui_DiceAppScreen)
+ui_DiceParser.set_height(120)
+ui_DiceParser.set_width(lv.pct(90))
+ui_DiceParser.set_x(0)
+ui_DiceParser.set_y(-40)
+ui_DiceParser.set_align( lv.ALIGN.BOTTOM_MID)
+ui_DiceParser.set_flex_flow(lv.FLEX_FLOW.COLUMN)
+ui_DiceParser.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_DiceParser, lv.obj.FLAG.SCROLLABLE, False)
+
+ui_DiceParserTitle = lv.label(ui_DiceParser)
+ui_DiceParserTitle.set_text("Dice Parser: Enter a string of dice rolls. (e.g. \"d20\" or \"4d20 + 10\")")
+ui_DiceParserTitle.set_width(lv.SIZE_CONTENT)	# 1
+ui_DiceParserTitle.set_height(lv.SIZE_CONTENT)   # 1
+ui_DiceParserTitle.set_align( lv.ALIGN.CENTER)
+
+ui_DiceParserInputContainer = lv.obj(ui_DiceParser)
+ui_DiceParserInputContainer.remove_style_all()
+ui_DiceParserInputContainer.set_height(50)
+ui_DiceParserInputContainer.set_width(lv.pct(100))
+ui_DiceParserInputContainer.set_align( lv.ALIGN.CENTER)
+ui_DiceParserInputContainer.set_flex_flow(lv.FLEX_FLOW.ROW)
+ui_DiceParserInputContainer.set_flex_align(lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
+SetFlag(ui_DiceParserInputContainer, lv.obj.FLAG.CLICKABLE, False)
+SetFlag(ui_DiceParserInputContainer, lv.obj.FLAG.SCROLLABLE, False)
+ui_DiceParserInputContainer.set_style_pad_row( 0, lv.PART.MAIN | lv.STATE.DEFAULT )
+ui_DiceParserInputContainer.set_style_pad_column( 15, lv.PART.MAIN | lv.STATE.DEFAULT )
+
+ui_DiceParserInput = lv.textarea(ui_DiceParserInputContainer)
+ui_DiceParserInput.set_height(lv.pct(100))
+ui_DiceParserInput.set_flex_grow(3)
+ui_DiceParserInput.set_placeholder_text("Placeholder...")
+ui_DiceParserInput.set_align( lv.ALIGN.CENTER)
+
+ui_DiceParserInput.add_event_cb(DiceParserInput_eventhandler, lv.EVENT.ALL, None)
+ui_DiceCalculateButton = lv.button(ui_DiceParserInputContainer)
+ui_DiceCalculateButton.set_height(lv.pct(100))
+ui_DiceCalculateButton.set_flex_grow(1)
+ui_DiceCalculateButton.set_align( lv.ALIGN.CENTER)
+SetFlag(ui_DiceCalculateButton, lv.obj.FLAG.SCROLLABLE, False)
+SetFlag(ui_DiceCalculateButton, lv.obj.FLAG.SCROLL_ON_FOCUS, True)
+
+ui_DiceCalcLabel = lv.label(ui_DiceCalculateButton)
+ui_DiceCalcLabel.set_text("Calculate")
+ui_DiceCalcLabel.set_width(lv.SIZE_CONTENT)	# 1
+ui_DiceCalcLabel.set_height(lv.SIZE_CONTENT)   # 1
+ui_DiceCalcLabel.set_align( lv.ALIGN.CENTER)
+
+ui_DiceCalculateButton.add_event_cb(DiceCalculateButton_eventhandler, lv.EVENT.ALL, None)
 ui_OverInterface = lv.obj(ui_MainContainer)
 ui_OverInterface.remove_style_all()
 ui_OverInterface.set_width(lv.pct(100))
 ui_OverInterface.set_height(lv.pct(100))
 ui_OverInterface.set_align( lv.ALIGN.CENTER)
-SetFlag(ui_OverInterface, lv.obj.FLAG.HIDDEN, True)
 SetFlag(ui_OverInterface, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_OverInterface, lv.obj.FLAG.SCROLLABLE, False)
 
@@ -526,6 +817,7 @@ ui_MainKeyboard.set_height(lv.pct(60))
 ui_MainKeyboard.set_align( lv.ALIGN.BOTTOM_MID)
 
 #if 'ui_KeyboardContent' in globals():
+ui_MainKeyboard.add_event_cb(MainKeyboard_eventhandler, lv.EVENT.ALL, None)
 ui_TopGuide = lv.obj(ui_MainContainer)
 ui_TopGuide.remove_style_all()
 ui_TopGuide.set_width(80)
