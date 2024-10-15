@@ -1,5 +1,7 @@
 import asyncio
 
+import micropython
+
 import globals
 import pdaos
 from pdaos_lib import Application, AsyncJob
@@ -16,6 +18,7 @@ class DiceApplication(Application):
         # Example: "d20" will be parsed into a d20 roll
         # Example 2: "3d20" will be parsed into rolling 3 times d20
         # Example 3: "3d20 + 10" will be parsed into rolling 3 times d20 then plus 10 of the total of the rolls
+        text_output: str = ""
         segments = unparsed.split("d")
         rolls = []
         total = 0
@@ -35,9 +38,11 @@ class DiceApplication(Application):
                     rolls.append(roll)
                     total += roll
             if print_output: print(f"Rolls: {rolls}, Total: {total}")
+            text_output = f"Rolls: {rolls}, Total: {total}"
         elif len(segments) == 1:
             if print_output: print(random.randint(1, int(segments[1])))
-        return rolls
+            text_output = f"{random.randint(1, int(segments[1]))}"
+        return rolls, text_output
 
     def run(self, container: any):
 
@@ -107,26 +112,31 @@ class DiceApplication(Application):
                 globals.set_temp_variable("ui_DiceParserInput", event_struct.get_target_obj())
                 globals.set_temp_variable("diceParserFocused", True)
             elif globals.get_temp_variable("diceParserFocused") and not pdaos.is_keyboard_focused():
+                def set_inputfield_text(*arg):
+                    print("Woah")
+                    # pdaos.revoke_keybaord()
+                    globals.get_temp_variable("ui_DiceParserInput").set_text(pdaos.get_keyboard_text())
+                    globals.remove_temp_variable("ui_DiceParserInput")
+
                 globals.set_temp_variable("diceParserFocused", False)
                 globals.remove_temp_variable("diceParserFocused")
-                print("Woah")
-                # pdaos.revoke_keybaord()
-                globals.get_temp_variable("ui_DiceParserInput").set_text(pdaos.get_keyboard_text())
-                globals.remove_temp_variable("ui_DiceParserInput")
+                micropython.schedule(set_inputfield_text, None)
             return
 
         def DiceCalculateButton_eventhandler(event_struct):
             target = event_struct.get_target()
             event = event_struct.code
             if event == lv.EVENT.CLICKED and True:
-                set_result(DiceApplication.parseDiceRoll(event_struct.get_target_obj().get_text(), False)[0])
+                rolls, output = DiceApplication.parseDiceRoll(ui_DiceParserInput.get_text(), False)
+                set_result(output)
             return
 
-        def set_result(number: int):
+        def set_result(number: str):
             ui_DiceRollResult.set_text(f"Result: {number}")
 
         def quick_roll(dice_number: int) -> int:
-            return DiceApplication.parseDiceRoll(f"d{dice_number}")[0]
+            rolls, text = DiceApplication.parseDiceRoll(f"d{dice_number}")
+            return rolls[0]
 
         # async def sync_text_to_area(self):
         #     while True:
