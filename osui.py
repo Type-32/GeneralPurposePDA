@@ -1,8 +1,9 @@
 import gc
 import lvgl as lv
-import utime
+import time
 import connectivity as con
 import asyncio
+import micropython
 
 import globals
 import pdaos_lib
@@ -115,10 +116,10 @@ def ui_App_create(comp_parent, app_title: str = "Untitled App", app_icon: str = 
         comp_App = ui_comp_get_root_from_child(target, "App")
         event = event_struct.code
         if event == lv.EVENT.CLICKED and True:
-            from pdaos import open_app
+            from pdaos import m_Apps
             import globals
             # globals.get_app_by_name(comp_App["AppTitle"].get_text())
-            open_app(globals.get_app_by_name(app_title))
+            micropython.schedule(m_Apps.open_app, globals.get_app_by_name(app_title))
         return
 
     cui_App = lv.obj(comp_parent)
@@ -223,8 +224,8 @@ def HomeButton_eventhandler(event_struct):
     target = event_struct.get_target()
     event = event_struct.code
     if event == lv.EVENT.CLICKED and True:
-        from pdaos import to_home
-        to_home()
+        from pdaos import m_OSUI
+        m_OSUI.to_home()
     return
 
 
@@ -263,7 +264,7 @@ def MainKeyboard_eventhandler(event_struct):
     target = event_struct.get_target()
     event = event_struct.code
     if event == lv.EVENT.READY:
-        print("Ready")
+        # print("Ready")
         # from pdaos import KB_FINISH_CALLBACK
         # for c in KB_FINISH_CALLBACK:
         #     c: callable
@@ -282,7 +283,7 @@ def get_keyboard_content() -> str:
 
 
 def get_local_current_time():
-    current_time = utime.localtime()
+    current_time = time.localtime()
     return "{:02d}:{:02d}:{:02d}".format(current_time[3], current_time[4], current_time[5])
 
 
@@ -536,7 +537,7 @@ class BeijingTime:
         #     print("Failed to sync time with NTP server")
 
     def update_time(self):
-        current_time = utime.localtime()
+        current_time = time.localtime()
         # Beijing time is UTC+8
         hour = (current_time[3] + 8) % 24
         self.current_time_str = "{:02d}:{:02d}".format(hour, current_time[4])

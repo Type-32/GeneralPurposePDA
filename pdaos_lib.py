@@ -1,6 +1,6 @@
 import asyncio
-
-import ujson
+import typing
+import json
 
 LIB_VER: str = "0.0.0"
 OS_VER: str = "0.0.0"
@@ -16,34 +16,31 @@ def get_library_version() -> str:
 
 # T = TypeVar('T', bound='IEncodable')
 
-# class DataManager(Generic[T]):
-#     def __init__(self, cls: Type[T], file_name: str = "data.json"):
-#         self.cls = cls
-#         self.file_name = file_name
-#         self.content: T = self.load()
-#
-#     def load(self) -> T:
-#         try:
-#             with open(self.file_name, 'r') as f:
-#                 data = f.read()
-#                 obj = self.cls()
-#                 obj.decode(data)
-#                 return obj
-#         except Exception as e:
-#             print(f'Exception occurred while loading the file: {e}')
-#             return self.cls()
-#
-#     def save(self):
-#         if self.content:
-#             with open(self.file_name, 'w') as f:
-#                 f.write(self.content.encode())
-#
-#     def get(self) -> T:
-#         return self.content
-#
-#     def set(self, content: T):
-#         self.content = content
-#         self.save()
+class DataManager:
+    def __init__(self, file_name: str):
+        self.file_name = file_name
+        self.content: any = self.load()
+
+    def load(self) -> any:
+        try:
+            with open(self.file_name, 'r') as f:
+                data = f.read()
+                return json.loads(data)
+        except Exception as e:
+            print(f'Exception occurred while loading the file: {e}')
+            return None
+
+    def save(self):
+        if self.content:
+            with open(self.file_name, 'w') as f:
+                f.write(json.dumps(self.content))
+
+    def get(self) -> any:
+        return self.content
+
+    def set(self, content: any):
+        self.content = content
+        self.save()
 
 
 class AsyncJob:
@@ -124,17 +121,35 @@ class Application:
 
 class IEncodable:
     def encode(self) -> str:
-        return ujson.dumps(self.__dict__)
+        return json.dumps(self.__dict__)
 
     def decode(self, data: str):
-        self.__dict__ = ujson.loads(data)
+        self.__dict__ = json.loads(data)
+
+
+class IIdentifiable:
+    def identifier(self) -> str:
+        pass
+
+    def find(self) -> any:
+        pass
+
+
+class ConfigTypes:
+    TOGGLE = "toggle"
+    VALUE = "value"
+    SLIDER = "slider"
+    DROPDOWN = "dropdown"
+    ACTION = "action"
 
 
 class ConfigSetting(IEncodable):
-    def __init__(self, setting_name: str, setting_description: str, default_value: any = None):
+    def __init__(self, setting_name: str, setting_description: str, default_value: any, option_type: str):
         self.setting_name = setting_name
         self.setting_description = setting_description
         self.setting_value = default_value
+        self.option_type = option_type
+        # Allowed option types: "toggle" | "value" | "slider" | "dropdown" | "action"
 
 
 class ConfigCategory(IEncodable):
@@ -151,20 +166,6 @@ class Config(IEncodable):
         self.config_categories = config_categories
 
 
-# class OSConfigManager(DataManager[Config]):
-#     def __init__(self, config_name: str = "sys_conf.json"):
-#         super().__init__(Config, config_name)
-#
-#     def change(self, value: any, save: bool = False, *keys):
-#         if self.content is not None:
-#             current = self.content
-#             for arg in keys[:-1]:
-#                 current = getattr(current, arg)
-#             setattr(current, keys[-1], value)
-#             if save:
-#                 self.save()
-
-
 class LVGLToObjectBindings:
     def __init__(self, obj: any, identifier: str):
         self.obj = obj
@@ -174,7 +175,7 @@ class LVGLToObjectBindings:
         return self.obj
 
 
-class Modal:
+class Modal(IIdentifiable):
     def __init__(self, title: str, message: str, buttons: list[str], callbacks=None):
         if callbacks is None:
             self.callbacks: list[callable] = []
@@ -184,13 +185,19 @@ class Modal:
         self.message = message
         self.buttons = buttons
 
+    def identifier(self):
+        return f"modal-{id(self)}"
 
-class Notification:
+
+class Notification(IIdentifiable):
     def __init__(self, title: str, message: str, duration: int = 3, click_callback: callable = None):
         self.title = title
         self.message = message
         self.click_callback = click_callback
         self.duration = duration
+
+    def identifier(self):
+        return f"notification-{id(self)}"
 
 
 def notif_identifier_hash(obj: Notification) -> str:

@@ -117,3 +117,78 @@ graph TD
 - A New and better Async Jobs system
 - The GC is now controlled by the OS. It's now a loop that runs every controlled duration
 
+# OS API Architecture
+The following files are the core files:
+- `main.py`
+- `osui.py`
+- `pdaos.py`
+- `pdaos_lib.py`
+- `globals.py`
+- `applications.py`
+- `connectivity.py`
+
+The flowchart in how the OS operates:
+```mermaid
+graph TD
+    Main["main.py"]
+    PDAOSLib["pdaos_lib.py"]
+    Globals["globals.py"]
+    Applications["applications.py"]
+    Connectivity["connectivity.py"]
+    
+    subgraph PDAOS["pdaos.py"]
+        Load{{"load()"}} ==> AsyncMainFunc{{"async main()"}}
+        Managers[("Managers")]
+    end
+    subgraph OSUI["osui.py"]
+        CreateUI["Create UI"]
+    end
+    
+    Main ==Entry==> Load
+    AsyncMainFunc ==> OSUI
+    
+    PDAOSLib -.Referenced.-> Load
+    PDAOSLib -.Referenced.-> AsyncMainFunc
+    Managers --> Globals
+    Applications -.Referenced.-> AsyncMainFunc
+    Applications -.Referenced.-> OSUI
+    
+    Globals -.Referenced.-> OSUI & PDAOS
+```
+```mermaid
+classDiagram
+    class AsyncJobsManager{
+        void AddJob(AsyncJob)
+        void RemoveJob(String)
+        void RunJob(AsyncJob)
+        void StopJob(String)
+    }
+    
+    class OSUIManager{
+        void Home()
+        void PushModal(Modal)
+        void PushNotif(Notification)
+    }
+    
+    class OSBindingsManager{
+        void AddLVGLObjBinding()
+        void RemoveLVGLObjBinding()
+        any GetLVGLObjBinding()
+        void RefreshLVGLObjBinding()
+    }
+    
+    class KeyboardManager{
+        boolean KeyboardFocused()
+        void RevokeKeyboard()
+        void InvokeKeyboard()
+        async void AsyncUseKeyboard()
+        String GetKeyboardText()
+    }
+    
+    class AppsManager{
+        void AddApp(Application)
+        void RemoveApp(Application)
+        void OpenApp(Application)
+        void CloseApp(Application)
+    }
+```

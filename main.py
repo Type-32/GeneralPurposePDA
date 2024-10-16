@@ -160,6 +160,20 @@ if __name__ == "__main__":
     asyncio.run(pdaos.main())
 
 
+def set_backlight(light: int = 100):
+    """
+    Set the backlight of the display. From 0~100.
+    :param light: The light intensity.
+    """
+    display.set_backlight(light)
+
+def set_display_state(enabled: bool):
+    """
+    Set the display state.
+    :param enabled: True to enable the display, False to disable.
+    """
+    display.set_power(enabled)
+
 
 # while True:
 #     task_handler.TaskHandler()
