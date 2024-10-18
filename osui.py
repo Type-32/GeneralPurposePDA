@@ -6,9 +6,9 @@ import asyncio
 import micropython
 
 import globals
+import pdaos
 import pdaos_lib
-from globals import QUEUED_NOTIFICATIONS
-from pdaos_lib import Application, LVGLToObjectBindings, Notification
+from pdaos_lib import Application, LVGLToObjectBindings, Notification, Modal
 
 # import ui
 # import ui_images
@@ -116,10 +116,9 @@ def ui_App_create(comp_parent, app_title: str = "Untitled App", app_icon: str = 
         comp_App = ui_comp_get_root_from_child(target, "App")
         event = event_struct.code
         if event == lv.EVENT.CLICKED and True:
-            from pdaos import m_Apps
             import globals
             # globals.get_app_by_name(comp_App["AppTitle"].get_text())
-            micropython.schedule(m_Apps.open_app, globals.get_app_by_name(app_title))
+            micropython.schedule(open_app, globals.get_app_by_name(app_title))
         return
 
     cui_App = lv.obj(comp_parent)
@@ -161,7 +160,7 @@ def comp_Notification_Notification_eventhandler(event_struct):
     event = event_struct.code
     if event == lv.EVENT.CLICKED and True:
         # (event_struct)
-        notif: Notification = QUEUED_NOTIFICATIONS.pop()
+        notif: Notification = globals.QUEUED_NOTIFICATIONS.pop()
         notif.click_callback()
         remove_lvgl_object_binding(pdaos_lib.notif_identifier_hash(notif))
     return
@@ -224,8 +223,7 @@ def HomeButton_eventhandler(event_struct):
     target = event_struct.get_target()
     event = event_struct.code
     if event == lv.EVENT.CLICKED and True:
-        from pdaos import m_OSUI
-        m_OSUI.to_home()
+        to_home()
     return
 
 
@@ -248,16 +246,14 @@ def ui_comp_get_root_from_child(child, compname):
 
 
 keyboard: str = ""
-KB_FOCUSED: bool = False
 
 
 def set_keyboard_state(enabled: bool):
-    global KB_FOCUSED
     if len(globals.QUEUED_MODALS) <= 0:
         SetVisible(ui_OverInterface, enabled)
     SetVisible(ui_KeyboardContainer, enabled)
 
-    KB_FOCUSED = enabled
+    pdaos.KB_FOCUSED = enabled
 
 
 def MainKeyboard_eventhandler(event_struct):
@@ -568,12 +564,12 @@ async def queue_push_notif_every_second():
     This Async function runs as a background process in the UI-Update level.
     """
     while True:
-        if len(QUEUED_NOTIFICATIONS) > 0:
+        if len(globals.QUEUED_NOTIFICATIONS) > 0:
             SetFlag(ui_NotificationsContainer, lv.obj.FLAG.HIDDEN, False)
-            create_notification(QUEUED_NOTIFICATIONS[0])
-            temp_sec: float = QUEUED_NOTIFICATIONS[0].duration
-            temp_hash: str = pdaos_lib.notif_identifier_hash(QUEUED_NOTIFICATIONS[0])
-            while temp_sec > 0 or temp_hash != pdaos_lib.notif_identifier_hash(QUEUED_NOTIFICATIONS[0]):
+            create_notification(globals.QUEUED_NOTIFICATIONS[0])
+            temp_sec: float = globals.QUEUED_NOTIFICATIONS[0].duration
+            temp_hash: str = pdaos_lib.notif_identifier_hash(globals.QUEUED_NOTIFICATIONS[0])
+            while temp_sec > 0 or temp_hash != pdaos_lib.notif_identifier_hash(globals.QUEUED_NOTIFICATIONS[0]):
                 temp_sec -= 0.1
                 await asyncio.sleep(0.1) # Detect whether the callback was invoked before the duration was up
         else:
@@ -654,3 +650,48 @@ async def update():
     # time = BeijingTime()
     task1, task2 = asyncio.create_task(data_to_lvgl_every_second()), asyncio.create_task(queue_push_notif_every_second())
     await asyncio.gather(task1, task2) # runs these tasks in parallel, asynchronously
+
+def close_app(app: Application):
+    if app is None:
+        return
+
+    from globals import set_focused_app, no_focused_app
+    set_focused_app(None)
+
+    if app:
+        pdaos.AsyncJobsManager.stop_async_jobs(app.get_process_id())
+        app.end()
+
+    update_main_screen()
+    print(f"Called close_app(). Debug: {app.get_process_id()}, {app.get_name()}, {no_focused_app()}")
+
+def open_app(app: Application):
+    from globals import get_focused_app, set_focused_app, no_focused_app
+    print(f"Called open_app. Debug: {app.get_process_id()}, {app.get_name()}, {no_focused_app()}")
+    close_app(get_focused_app())  # Close the current app if any
+    set_focused_app(app)
+    # print(f"Set Focused App: {get_focused_app()}")
+    update_main_screen()
+    # print(f"Set Focused App: {get_focused_app()}")
+    get_focused_app().run(get_application_screen_container())
+
+def push_modal(modal: Modal):
+    globals.QUEUED_MODALS.append(modal)
+
+def push_notif(notif: Notification):
+    globals.QUEUED_NOTIFICATIONS.append(notif)
+
+def to_home():
+    from globals import no_focused_app
+    if not no_focused_app():
+        close_app(globals.get_focused_app())
+    update_main_screen()
+
+def set_toggle_state(obj: any, state: bool):
+    obj.add_state(
+        lv.STATE.CHECKED * state | lv.STATE.PRESSED * False | lv.STATE.FOCUSED * False | lv.STATE.DISABLED * False | lv.STATE.EDITED * False | lv.STATE.USER_1 * False | lv.STATE.USER_2 * False | lv.STATE.USER_3 * False | lv.STATE.USER_4 * False)
+    obj.remove_state(lv.STATE.CHECKED * (not state) | lv.STATE.PRESSED * (not False) | lv.STATE.FOCUSED * (
+        not False) | lv.STATE.DISABLED * (not False) | lv.STATE.EDITED * (not False) | lv.STATE.USER_1 * (
+                               not False) | lv.STATE.USER_2 * (not False) | lv.STATE.USER_3 * (
+                               not False) | lv.STATE.USER_4 * (not False))
+

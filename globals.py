@@ -7,6 +7,7 @@ ASYNC_JOBS: list[AsyncJob] = []
 QUEUED_MODALS: list[Modal] = []
 QUEUED_NOTIFICATIONS: list[Notification] = []
 TEMP_VARIABLES: dict[str, any] = {}
+SIGNATURE_METHODS: dict[str, callable] = {}
 
 def get_app_by_name(name: str) -> Application | None:
     for app in APPS:
@@ -34,3 +35,12 @@ def get_temp_variable(key: str) -> any:
 
 def remove_temp_variable(key: str):
     TEMP_VARIABLES.pop(key, None)
+
+def set_signature_method(key: str, method: callable):
+    SIGNATURE_METHODS[key] = method
+
+def get_signature_method(key: str) -> callable:
+    return SIGNATURE_METHODS.get(key)
+
+def remove_signature_method(key: str):
+    SIGNATURE_METHODS.pop(key, None)
