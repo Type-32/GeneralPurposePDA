@@ -560,9 +560,7 @@ async def data_to_lvgl_every_second():
 
 
 async def queue_push_notif_every_second():
-    """
-    This Async function runs as a background process in the UI-Update level.
-    """
+    """This Async function runs as a background process in the UI-Update level."""
     while True:
         if len(globals.QUEUED_NOTIFICATIONS) > 0:
             SetFlag(ui_NotificationsContainer, lv.obj.FLAG.HIDDEN, False)
@@ -644,9 +642,7 @@ def create_notification(notif: Notification):
 
 
 async def update():
-    """
-    This function starts the OS-UI Level async updates.
-    """
+    """This function starts the OS-UI Level async updates."""
     # time = BeijingTime()
     task1, task2 = asyncio.create_task(data_to_lvgl_every_second()), asyncio.create_task(queue_push_notif_every_second())
     await asyncio.gather(task1, task2) # runs these tasks in parallel, asynchronously

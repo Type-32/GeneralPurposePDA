@@ -88,9 +88,7 @@ def load():
 
 
 async def os_update():
-    """
-    OS-Level Async Updates.
-    """
+    """OS-Level Async Updates."""
     pass
     # while True:
     #     # Perform any OS-level updates here

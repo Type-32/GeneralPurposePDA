@@ -58,9 +58,7 @@ class AsyncJob:
         return self.task is not None
 
     def execute(self):
-        """
-        Executes the given coroutine job asynchronously.
-        """
+        """Executes the given coroutine job asynchronously."""
         if self.is_running():
             print("Task is already running.")
             pass
