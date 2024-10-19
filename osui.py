@@ -331,7 +331,7 @@ SetFlag(ui_LeftSection, lv.obj.FLAG.CLICKABLE, False)
 SetFlag(ui_LeftSection, lv.obj.FLAG.SCROLLABLE, False)
 
 ui_WifiStatus = lv.label(ui_LeftSection)
-ui_WifiStatus.set_text(f"Wifi: Loading...")
+ui_WifiStatus.set_text("Wifi: Loading...")
 ui_WifiStatus.set_width(lv.SIZE_CONTENT)  # 1
 ui_WifiStatus.set_height(lv.SIZE_CONTENT)  # 1
 ui_WifiStatus.set_align(lv.ALIGN.CENTER)
