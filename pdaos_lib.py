@@ -196,7 +196,9 @@ class ConfigSetting(IEncodable):
 
 
 class ConfigCategory(IEncodable):
-    def __init__(self, category_name: str = "Untitled Category", category_description: str = "No desc", category_items: list[ConfigSetting] = []):
+    def __init__(self, category_name: str = "Untitled Category", category_description: str = "No desc", category_items: list[ConfigSetting] = None):
+        if category_items is None:
+            category_items = []
         self.category_name = category_name
         self.category_description = category_description
         self.category_items = category_items
@@ -223,7 +225,9 @@ class ConfigCategory(IEncodable):
 
 
 class Config(IEncodable):
-    def __init__(self, config_name: str = "", config_semver: str = "", config_categories: list[ConfigCategory] = []):
+    def __init__(self, config_name: str = "", config_semver: str = "", config_categories: list[ConfigCategory] = None):
+        if config_categories is None:
+            config_categories = []
         self.config_name = config_name
         self.config_semver = config_semver
         self.config_categories = config_categories
