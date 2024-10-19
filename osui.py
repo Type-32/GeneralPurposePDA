@@ -116,7 +116,6 @@ def ui_App_create(comp_parent, app_title: str = "Untitled App", app_icon: str = 
         comp_App = ui_comp_get_root_from_child(target, "App")
         event = event_struct.code
         if event == lv.EVENT.CLICKED and True:
-            import globals
             # globals.get_app_by_name(comp_App["AppTitle"].get_text())
             micropython.schedule(open_app, globals.get_app_by_name(app_title))
         return

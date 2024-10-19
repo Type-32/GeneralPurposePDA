@@ -101,7 +101,6 @@ async def gc_coroutine(interval: int):
     Runs a coroutine for a Garbage Collector.
     :param interval: The interval between each GC in seconds.
     """
-    import gc
     gc.enable()
     while True:
         gc.collect()
