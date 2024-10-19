@@ -1,12 +1,10 @@
 import gc
 
-import globals
-import osui
 import asyncio
 import json
 
-from globals import QUEUED_MODALS, QUEUED_NOTIFICATIONS, get_focused_app, OS_LOADED, APPS, ASYNC_JOBS
-from osui import update_main_screen, get_application_screen_container, remove_lvgl_object_binding, set_keyboard_state, \
+from globals import OS_LOADED, APPS, ASYNC_JOBS
+from osui import remove_lvgl_object_binding, set_keyboard_state, \
     get_keyboard_content, set_keyboard_content, add_lvgl_object_binding, get_lvgl_object_binding, \
     refresh_lvgl_app_objects
 
@@ -108,7 +106,8 @@ async def gc_coroutine(interval: int):
 
 
 async def main():
-    await osui.update() # Start OS-UI Async Updates
+    from osui import update
+    await update() # Start OS-UI Async Updates
     asyncio.run(os_update())
     asyncio.run(gc_coroutine(60)) # Run a 60-second GC. Must use asyncio.run() to run in the background.
 
@@ -123,25 +122,30 @@ KB_FOCUSED: bool = False
 class OSUIManager:
     @staticmethod
     def push_modal(modal: Modal):
-        osui.push_modal(modal)
+        from osui import push_modal
+        push_modal(modal)
 
     @staticmethod
     def push_notif(notif: Notification):
-        osui.push_notif(notif)
+        from osui import push_notif
+        push_notif(notif)
 
     @staticmethod
     def to_home():
-        osui.to_home()
+        from osui import to_home
+        to_home()
 
 
 class AppsManager:
     @staticmethod
     def open_app(app: Application):
-        osui.open_app(app)
+        from osui import open_app
+        open_app(app)
 
     @staticmethod
     def close_app(app: Application):
-        osui.close_app(app)
+        from osui import close_app
+        close_app(app)
 
     @staticmethod
     def add_app(app: Application):
