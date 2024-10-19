@@ -107,7 +107,7 @@ async def gc_coroutine(interval: int):
 
 async def main():
     from osui import update
-    await update() # Start OS-UI Async Updates
+    await update()  # Start OS-UI Async Updates
     asyncio.run(os_update())
     asyncio.run(gc_coroutine(60)) # Run a 60-second GC. Must use asyncio.run() to run in the background.
 
